@@ -1,11 +1,29 @@
 import React, { useState, useEffect } from "react";
+import Button from "../Components/Button";
 
-import firebase from "./firebase.js";
+import firebase from "../firebase.js";
 
 function App() {
   const [heroesArr, setHeroesArr] = useState([]);
-  const [userTest, setUserTest] = useState("");
+
+  const [votingButtons, setVotingButtons] = useState("");
+  const [UID, setUID] = useState("");
+
   const db = firebase.firestore();
+
+  useEffect(() => {
+    const listener = firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        setUID(firebase.auth().currentUser);
+        setVotingButtons(true);
+      } else {
+        setVotingButtons(false);
+      }
+    });
+    return () => {
+      listener();
+    };
+  }, []);
 
   useEffect(() => {
     db.collection("characterOptions")
@@ -79,42 +97,22 @@ function App() {
     );
   };
 
-  const onSignOut = () => {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        console.log("sign out successful");
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  };
-  firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-      if (user != null) {
-        const person = firebase.auth().currentUser;
-        const uid = person.uid;
-        console.log(uid);
-      }
-      setUserTest(false);
-    } else {
-      setUserTest(true);
-    }
-  });
-
   return (
     <div className="App">
-      {userTest && <button>dummy sign in</button>}
-      <button onClick={onSignOut}>Sign out</button>
       {heroesArr.map((item, i) => (
         <div key={i}>
           <p>{item.Name}</p>
           <p>{item.votes}</p>
           {item.uidDownvoted && <p>this has been downvoted</p>}
           {item.uidUpvoted && <p>this has been upvoted</p>}
-          <button onClick={() => onDownVote(i)}>Downvote</button>
-          <button onClick={() => onUpVote(i)}>Upvote</button>
+          {votingButtons && (
+            <>
+              <Button onClick={() => onDownVote(i)}>Downvote</Button>
+              <button onClick={() => onUpVote(i)}>Upvote</button>
+            </>
+          )}
+
+          {!votingButtons && <Button>User signed out</Button>}
         </div>
       ))}
     </div>
@@ -128,7 +126,5 @@ export default App;
 /add url to user data & add to url data collection
 /add all portfolio/blog data to url data collection
 /upon vising endpoint, use url params to query data from url collection
-
-
 
 */
