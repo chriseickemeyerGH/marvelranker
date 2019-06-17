@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
 import firebase from "../../firebase.js";
-import { Redirect } from "react-router-dom";
-import "../../css/Views/SignUp.css";
-import TextBox from "../../Components/TextBox";
-import Button from "../../Components/Button";
+import PassEmailForm from "../../Components/PassEmailForm";
 
 function SignUp() {
   const [redirect, setRedirect] = useState(false);
   const [email, setEmail] = useState("");
   const [passWord, setPassWord] = useState("");
   const [passWordWarning, setPassWordWarning] = useState(false);
-
   const [errorState, showErrorState] = useState(false);
   const [errorMessage, showErrorMessage] = useState("");
 
@@ -55,52 +51,23 @@ function SignUp() {
       });
   };
 
-  const onGoogleSignIn = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithRedirect(provider);
-  };
-
   return (
-    <div className="flexParent">
-      {redirect && <Redirect to="/" />}
-      <h1>Sign Up</h1>
-      <>{errorState && <p className="error">{errorMessage}</p>}</>
-      <form>
-        <label>Email</label>
-        <br />
-        <TextBox
-          type="text"
-          name="email"
-          value={email}
-          required
-          onChange={onEmailChange}
-        />
-        <br />
-        <label>Password</label>
-        <br />
-        <TextBox
-          type="password"
-          name="password"
-          value={passWord}
-          onChange={onPassWordChange}
-          required
-        />
-        <br />
-        {passWordWarning && <p>Password must at least 6 characters</p>}
-
-        <Button
-          type="submit"
-          disabled={passWord.length > 5 && email.length > 0 ? false : true}
-          onClick={onSignUp}
-          className="marginTop"
-        >
-          Create Account and Sign In
-        </Button>
-      </form>
-      <h2>Or</h2>
-      <Button onClick={onGoogleSignIn}>Sign in with Google</Button>
-      <p>After completing Google sign-in, you will be redirected shortly</p>
-    </div>
+    <PassEmailForm
+      title="Sign Up"
+      homeRedirect={redirect}
+      errorState={errorState}
+      errorMessage={errorMessage}
+      email={email}
+      onEmailChange={onEmailChange}
+      passWord={passWord}
+      onPassWordChange={onPassWordChange}
+      passWordWarning={passWordWarning}
+      passWordWarningChildren="Password must at least 6 characters"
+      onSubmit={onSignUp}
+      disabled={passWord.length > 5 && email.length > 0 ? false : true}
+      submitButtonClassName="marginTop disabled"
+      onSubmitButtonChildren="Create Account and Sign In"
+    />
   );
 }
 

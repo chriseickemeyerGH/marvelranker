@@ -1,29 +1,39 @@
 import React, { useState, useEffect } from "react";
 import Button from "../Components/Button";
-
 import firebase from "../firebase.js";
+import Modal from "../Components/Modal";
+import TextBox from "../Components/TextBox";
+import SnackBar from "../Components/SnackBar";
+import "../css/Views/App.css";
 
 function App() {
   const [heroesArr, setHeroesArr] = useState([]);
-
-  const [votingButtons, setVotingButtons] = useState("");
+  const [loggedIn, isLoggedIn] = useState(false);
   const [UID, setUID] = useState("");
-
+  const [showModal, setShowModal] = useState(false);
+  const [verifiedPassword, setVerifiedPassword] = useState("");
+  const [deletionSnackBar, showDeletionSnackBar] = useState(false);
+  const [signOutSnackBar, showSignOutSnackBar] = useState(false);
+  const [modalError, showModalError] = useState(false);
+  const [modalErrorText, setModalErrorText] = useState("");
+  //firebase variables
+  const USER = firebase.auth().currentUser;
   const db = firebase.firestore();
 
   useEffect(() => {
     const listener = firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        setUID(firebase.auth().currentUser);
-        setVotingButtons(true);
+        setUID(user.uid);
+        console.log(UID);
+        isLoggedIn(true);
       } else {
-        setVotingButtons(false);
+        isLoggedIn(false);
       }
     });
     return () => {
       listener();
     };
-  }, []);
+  }, [UID]);
 
   useEffect(() => {
     db.collection("characterOptions")
@@ -31,39 +41,52 @@ function App() {
       .onSnapshot(coll => {
         const newHeroes = [];
         coll.forEach(doc => {
-          const { Name, uidDownvoted, uidUpvoted, votes } = doc.data();
+          const { Name, votes, upvoters, downvoters } = doc.data();
           newHeroes.push({
             key: doc.id,
             doc,
             Name,
-            uidDownvoted,
-            uidUpvoted,
-            votes
+            votes,
+            upvoters,
+            downvoters
           });
         });
         setHeroesArr(newHeroes);
+        console.log(newHeroes);
       });
-  }, [db]);
+  }, [UID, db]);
 
   const onUpVote = i => {
     const collRef = db.collection("characterOptions");
     setHeroesArr(heroesArr =>
       heroesArr.map((item, o) => {
-        if (i === o && !item.uidDownvoted && !item.uidUpvoted) {
+        if (
+          i === o &&
+          !item.downvoters.includes(UID) &&
+          !item.upvoters.includes(UID)
+        ) {
           collRef.doc(item.key).update({
             votes: firebase.firestore.FieldValue.increment(1),
-            uidUpvoted: true
+            upvoters: [...item.upvoters, UID]
           });
-        } else if (i === o && !item.uidDownvoted && item.uidUpvoted) {
+        } else if (
+          i === o &&
+          !item.downvoters.includes(UID) &&
+          item.upvoters.includes(UID)
+        ) {
           collRef.doc(item.key).update({
             votes: firebase.firestore.FieldValue.increment(-1),
-            uidUpvoted: false
+            upvoters: item.upvoters.filter(val => val !== UID)
           });
-        } else if (i === o && item.uidDownvoted && !item.uidUpvoted) {
+        } else if (
+          i === o &&
+          item.downvoters.includes(UID) &&
+          !item.upvoters.includes(UID)
+        ) {
           collRef.doc(item.key).update({
             votes: firebase.firestore.FieldValue.increment(2),
-            uidUpvoted: true,
-            uidDownvoted: false
+            upvoters: [...item.upvoters, UID],
+            downvoters: item.downvoters.filter(val => val !== UID)
           });
         }
         return item;
@@ -75,21 +98,33 @@ function App() {
     const collRef = db.collection("characterOptions");
     setHeroesArr(heroesArr =>
       heroesArr.map((item, o) => {
-        if (i === o && !item.uidDownvoted && !item.uidUpvoted) {
+        if (
+          i === o &&
+          !item.downvoters.includes(UID) &&
+          !item.upvoters.includes(UID)
+        ) {
           collRef.doc(item.key).update({
             votes: firebase.firestore.FieldValue.increment(-1),
-            uidDownvoted: true
+            downvoters: [...item.downvoters, UID]
           });
-        } else if (i === o && item.uidDownvoted && !item.uidUpvoted) {
+        } else if (
+          i === o &&
+          item.downvoters.includes(UID) &&
+          !item.upvoters.includes(UID)
+        ) {
           collRef.doc(item.key).update({
             votes: firebase.firestore.FieldValue.increment(1),
-            uidDownvoted: false
+            downvoters: item.downvoters.filter(val => val !== UID)
           });
-        } else if (i === o && !item.uidDownvoted && item.uidUpvoted) {
+        } else if (
+          i === o &&
+          !item.downvoters.includes(UID) &&
+          item.upvoters.includes(UID)
+        ) {
           collRef.doc(item.key).update({
             votes: firebase.firestore.FieldValue.increment(-2),
-            uidDownvoted: true,
-            uidUpvoted: false
+            downvoters: [...item.downvoters, UID],
+            upvoters: item.upvoters.filter(val => val !== UID)
           });
         }
         return item;
@@ -97,25 +132,141 @@ function App() {
     );
   };
 
-  return (
-    <div className="App">
-      {heroesArr.map((item, i) => (
-        <div key={i}>
-          <p>{item.Name}</p>
-          <p>{item.votes}</p>
-          {item.uidDownvoted && <p>this has been downvoted</p>}
-          {item.uidUpvoted && <p>this has been upvoted</p>}
-          {votingButtons && (
-            <>
-              <Button onClick={() => onDownVote(i)}>Downvote</Button>
-              <button onClick={() => onUpVote(i)}>Upvote</button>
-            </>
-          )}
+  const onDeleteAccount = () => {
+    const credential = firebase.auth.EmailAuthProvider.credential(
+      USER.email,
+      verifiedPassword
+    );
+    USER.reauthenticateWithCredential(credential)
+      .then(() => {
+        USER.delete()
+          .then(() => {
+            setShowModal(false);
+            setTimeout(() => {
+              showDeletionSnackBar(true);
+            }, 1);
+            setTimeout(() => {
+              showDeletionSnackBar(false);
+            }, 2400);
+          })
+          .catch(error => {
+            if (error.code) {
+              showModalError(true);
+              setModalErrorText(error.message);
+            }
+          });
+      })
+      .catch(error => {
+        if (error.code) {
+          showModalError(true);
+          setModalErrorText(error.message);
+        }
+      });
+  };
 
-          {!votingButtons && <Button>User signed out</Button>}
-        </div>
-      ))}
-    </div>
+  const onSignOut = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        isLoggedIn(false);
+        showSignOutSnackBar(true);
+        setTimeout(() => {
+          showSignOutSnackBar(false);
+        }, 2400);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+  const closeModal = () => {
+    setShowModal(false);
+    showModalError(false);
+    setVerifiedPassword("");
+  };
+
+  const snackBars = () => (
+    <>
+      <SnackBar
+        snackBarVisibility={deletionSnackBar}
+        text="Your account has been successfully deleted"
+      />
+      <SnackBar
+        snackBarVisibility={signOutSnackBar}
+        text="Sign-out successful"
+      />
+    </>
+  );
+
+  const modalComponent = () => (
+    <>
+      <Modal
+        title="Verify Password"
+        onSubmit={onDeleteAccount}
+        onClose={closeModal}
+        submitTitle="Delete my account"
+        showModal={showModal}
+      >
+        <p>You must verify your password to delete your account. </p>
+
+        {modalError && <p className="error">{modalErrorText}</p>}
+        <label htmlFor="email">Email:</label>
+
+        <TextBox
+          readOnly={true}
+          type="email"
+          name="email"
+          value={USER ? USER.email : ""}
+        />
+        <label htmlFor="password">Password:</label>
+        <TextBox
+          type="password"
+          name="password"
+          value={verifiedPassword}
+          onChange={e => setVerifiedPassword(e.target.value)}
+        />
+      </Modal>
+    </>
+  );
+
+  return (
+    <>
+      {loggedIn && (
+        <>
+          <div className="appCenter">
+            <button className="appDirectives" onClick={onSignOut}>
+              Sign Out
+            </button>
+            <button
+              className="appDirectives"
+              onClick={() => setShowModal(true)}
+            >
+              Delete Your Account
+            </button>
+          </div>
+        </>
+      )}
+      <div className="topMar100">
+        {heroesArr.map((item, i) => (
+          <React.Fragment key={i}>
+            <p>{item.Name}</p>
+            <p>{item.votes}</p>
+            {item.downvoters.includes(UID) && <p>this has been downvoted</p>}
+            {item.upvoters.includes(UID) && <p>this has been upvoted</p>}
+            {loggedIn && (
+              <>
+                <Button onClick={() => onDownVote(i)}>Downvote</Button>
+                <button onClick={() => onUpVote(i)}>Upvote</button>
+              </>
+            )}
+
+            {!loggedIn && <Button>User signed out</Button>}
+          </React.Fragment>
+        ))}
+      </div>
+      {modalComponent()}
+      {snackBars()}
+    </>
   );
 }
 

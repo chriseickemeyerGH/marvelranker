@@ -20,3 +20,11 @@ img {
 img:hover {
   cursor: pointer;
 }
+.disabled:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.disabled:disabled:hover {
+  opacity: 0.5;
+}

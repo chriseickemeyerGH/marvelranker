@@ -1,15 +1,8 @@
-.error {
-  color: red;
-  padding: 5px;
+.disabled:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
-.flexParent {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.marginTop {
-  margin-top: 10px;
+.disabled:disabled:hover {
+  opacity: 0.5;
 }
