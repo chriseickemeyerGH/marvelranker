@@ -1,25 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import firebase from "../../firebase.js";
 import PassEmailForm from "../../Components/PassEmailForm";
+import { useBasicAuthHook } from "../../Hooks/authHook";
 
 function SignUp() {
-  const [redirect, setRedirect] = useState(false);
   const [email, setEmail] = useState("");
   const [passWord, setPassWord] = useState("");
   const [passWordWarning, setPassWordWarning] = useState(false);
   const [errorState, showErrorState] = useState(false);
   const [errorMessage, showErrorMessage] = useState("");
 
-  useEffect(() => {
-    const listener = firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        setRedirect(true);
-      }
-    });
-    return () => {
-      listener();
-    };
-  }, []);
+  const loggedIn = useBasicAuthHook();
 
   const onPassWordChange = e => {
     const newPassWord = e.target.value;
@@ -54,7 +45,7 @@ function SignUp() {
   return (
     <PassEmailForm
       title="Sign Up"
-      homeRedirect={redirect}
+      homeRedirect={loggedIn}
       errorState={errorState}
       errorMessage={errorMessage}
       email={email}

@@ -1,16 +1,16 @@
 .snackBarClass {
   visibility: visible;
   animation: fadein 0.4s, fadeout 0.4s 2s;
-  width: 225px; /* Set a default minimum width */
+  width: 225px;
   margin-left: -125px;
-  background-color: rgb(238, 238, 238); /* Black background color */
-  color: rgb(58, 58, 58); /* White text color */
-  text-align: center; /* Centered text */
-  border-radius: 10px; /* Rounded borders */
-  padding: 5px; /* Padding */
-  position: fixed; /* Sit on top of the screen */
-  z-index: 15; /* Add a z-index if needed */
-  left: 50%; /* Center the snackbar */
+  background-color: rgb(255, 251, 251);
+  color: rgb(58, 58, 58);
+  text-align: center;
+  border-radius: 10px;
+  padding: 5px;
+  position: fixed;
+  z-index: 15;
+  left: 50%;
   bottom: 30px;
   font-size: 20px;
   border: 1px solid black;

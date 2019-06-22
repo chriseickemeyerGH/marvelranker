@@ -8,6 +8,7 @@
   padding: 20px 5px 5px 5px;
   box-sizing: border-box;
 }
+.routerButton:hover,
 .linkStyle:hover {
   background-color: rgb(95, 95, 95);
   color: rgb(241, 239, 239);
@@ -17,11 +18,22 @@
   background-color: rgb(95, 95, 95);
   color: rgb(241, 239, 239);
 }
-.routerCenter {
+
+.centerTheRouter {
   text-align: center;
   position: absolute;
-  top: 15px;
   width: 400px;
   left: 50%;
   margin-left: -200px;
+}
+.routerLinkCenter {
+  top: 15px;
+}
+.routerButtonsCenter {
+  top: -5px;
+}
+
+.routerButton {
+  font-size: 16px;
+  cursor: pointer;
 }

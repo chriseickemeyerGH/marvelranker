@@ -1,30 +1,26 @@
 import React, { useState, useEffect } from "react";
-import Button from "../Components/Button";
 import firebase from "../firebase.js";
-import Modal from "../Components/Modal";
-import TextBox from "../Components/TextBox";
 import SnackBar from "../Components/SnackBar";
+import PositionList from "../Components/PositionList";
+import VotingButtons from "../Components/VotingButtons";
+import SwitchButtons from "../Components/SwitchButtons";
+//import Spinner from "../Components/Spinner";
 import "../css/Views/App.css";
 
 function App() {
   const [heroesArr, setHeroesArr] = useState([]);
-  const [loggedIn, isLoggedIn] = useState(false);
+  const [filmArr, setFilmArr] = useState([]);
+  const [loggedIn, isLoggedIn] = useState("");
   const [UID, setUID] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [verifiedPassword, setVerifiedPassword] = useState("");
-  const [deletionSnackBar, showDeletionSnackBar] = useState(false);
-  const [signOutSnackBar, showSignOutSnackBar] = useState(false);
-  const [modalError, showModalError] = useState(false);
-  const [modalErrorText, setModalErrorText] = useState("");
-  //firebase variables
-  const USER = firebase.auth().currentUser;
+  const [switchState, setSwitchState] = useState(true);
+  const [signInSnackBar, showSignInSnackBar] = useState(false);
+
   const db = firebase.firestore();
 
   useEffect(() => {
     const listener = firebase.auth().onAuthStateChanged(user => {
       if (user) {
         setUID(user.uid);
-        console.log(UID);
         isLoggedIn(true);
       } else {
         isLoggedIn(false);
@@ -33,30 +29,83 @@ function App() {
     return () => {
       listener();
     };
-  }, [UID]);
+  }, []);
 
   useEffect(() => {
     db.collection("characterOptions")
       .orderBy("votes", "desc")
-      .onSnapshot(coll => {
-        const newHeroes = [];
-        coll.forEach(doc => {
-          const { Name, votes, upvoters, downvoters } = doc.data();
-          newHeroes.push({
-            key: doc.id,
-            doc,
-            Name,
-            votes,
-            upvoters,
-            downvoters
+      .onSnapshot(
+        coll => {
+          const newHeroes = [];
+          coll.forEach(doc => {
+            const {
+              name,
+              votes,
+              upvoters,
+              downvoters,
+              styles,
+              totalUpvotes,
+              totalDownvotes
+            } = doc.data();
+            newHeroes.push({
+              key: doc.id,
+              doc,
+              name,
+              votes,
+              upvoters,
+              downvoters,
+              styles,
+              totalUpvotes,
+              totalDownvotes
+            });
           });
-        });
-        setHeroesArr(newHeroes);
-        console.log(newHeroes);
-      });
-  }, [UID, db]);
+          setHeroesArr(newHeroes);
+        },
+        error => {
+          alert("Error fetching character data: ", error);
+        }
+      );
+  }, [db]);
 
-  const onUpVote = i => {
+  useEffect(() => {
+    db.collection("filmOptions")
+      .orderBy("votes", "desc")
+      .onSnapshot(
+        coll => {
+          const newFilms = [];
+          coll.forEach(doc => {
+            const {
+              name,
+              votes,
+              upvoters,
+              downvoters,
+              styles,
+              totalUpvotes,
+              totalDownvotes
+            } = doc.data();
+            newFilms.push({
+              key: doc.id,
+              doc,
+              name,
+              votes,
+              upvoters,
+              downvoters,
+              styles,
+              totalUpvotes,
+              totalDownvotes
+            });
+          });
+          setFilmArr(newFilms);
+        },
+        error => {
+          alert("Error fetching film data: ", error);
+        }
+      );
+  }, [db]);
+
+  const store = firebase.firestore;
+
+  const onCharacterUpVote = i => {
     const collRef = db.collection("characterOptions");
     setHeroesArr(heroesArr =>
       heroesArr.map((item, o) => {
@@ -66,27 +115,31 @@ function App() {
           !item.upvoters.includes(UID)
         ) {
           collRef.doc(item.key).update({
-            votes: firebase.firestore.FieldValue.increment(1),
-            upvoters: [...item.upvoters, UID]
-          });
-        } else if (
-          i === o &&
-          !item.downvoters.includes(UID) &&
-          item.upvoters.includes(UID)
-        ) {
-          collRef.doc(item.key).update({
-            votes: firebase.firestore.FieldValue.increment(-1),
-            upvoters: item.upvoters.filter(val => val !== UID)
-          });
-        } else if (
-          i === o &&
-          item.downvoters.includes(UID) &&
-          !item.upvoters.includes(UID)
-        ) {
-          collRef.doc(item.key).update({
-            votes: firebase.firestore.FieldValue.increment(2),
+            votes: store.FieldValue.increment(1),
             upvoters: [...item.upvoters, UID],
-            downvoters: item.downvoters.filter(val => val !== UID)
+            totalUpvotes: store.FieldValue.increment(1)
+          });
+        } else if (
+          i === o &&
+          !item.downvoters.includes(UID) &&
+          item.upvoters.includes(UID)
+        ) {
+          collRef.doc(item.key).update({
+            votes: store.FieldValue.increment(-1),
+            upvoters: item.upvoters.filter(val => val !== UID),
+            totalUpvotes: store.FieldValue.increment(-1)
+          });
+        } else if (
+          i === o &&
+          item.downvoters.includes(UID) &&
+          !item.upvoters.includes(UID)
+        ) {
+          collRef.doc(item.key).update({
+            votes: store.FieldValue.increment(2),
+            upvoters: [...item.upvoters, UID],
+            downvoters: item.downvoters.filter(val => val !== UID),
+            totalUpvotes: store.FieldValue.increment(1),
+            totalDownvotes: store.FieldValue.increment(-1)
           });
         }
         return item;
@@ -94,7 +147,7 @@ function App() {
     );
   };
 
-  const onDownVote = i => {
+  const onCharacterDownVote = i => {
     const collRef = db.collection("characterOptions");
     setHeroesArr(heroesArr =>
       heroesArr.map((item, o) => {
@@ -104,8 +157,9 @@ function App() {
           !item.upvoters.includes(UID)
         ) {
           collRef.doc(item.key).update({
-            votes: firebase.firestore.FieldValue.increment(-1),
-            downvoters: [...item.downvoters, UID]
+            votes: store.FieldValue.increment(-1),
+            downvoters: [...item.downvoters, UID],
+            totalDownvotes: store.FieldValue.increment(1)
           });
         } else if (
           i === o &&
@@ -113,8 +167,9 @@ function App() {
           !item.upvoters.includes(UID)
         ) {
           collRef.doc(item.key).update({
-            votes: firebase.firestore.FieldValue.increment(1),
-            downvoters: item.downvoters.filter(val => val !== UID)
+            votes: store.FieldValue.increment(1),
+            downvoters: item.downvoters.filter(val => val !== UID),
+            totalDownvotes: store.FieldValue.increment(-1)
           });
         } else if (
           i === o &&
@@ -122,9 +177,11 @@ function App() {
           item.upvoters.includes(UID)
         ) {
           collRef.doc(item.key).update({
-            votes: firebase.firestore.FieldValue.increment(-2),
+            votes: store.FieldValue.increment(-2),
             downvoters: [...item.downvoters, UID],
-            upvoters: item.upvoters.filter(val => val !== UID)
+            upvoters: item.upvoters.filter(val => val !== UID),
+            totalDownvotes: store.FieldValue.increment(1),
+            totalUpvotes: store.FieldValue.increment(-1)
           });
         }
         return item;
@@ -132,140 +189,200 @@ function App() {
     );
   };
 
-  const onDeleteAccount = () => {
-    const credential = firebase.auth.EmailAuthProvider.credential(
-      USER.email,
-      verifiedPassword
-    );
-    USER.reauthenticateWithCredential(credential)
-      .then(() => {
-        USER.delete()
-          .then(() => {
-            setShowModal(false);
-            setTimeout(() => {
-              showDeletionSnackBar(true);
-            }, 1);
-            setTimeout(() => {
-              showDeletionSnackBar(false);
-            }, 2400);
-          })
-          .catch(error => {
-            if (error.code) {
-              showModalError(true);
-              setModalErrorText(error.message);
-            }
+  const onFilmUpvote = i => {
+    const collRef = db.collection("filmOptions");
+    setFilmArr(prevFilmArr =>
+      prevFilmArr.map((item, o) => {
+        if (
+          i === o &&
+          !item.downvoters.includes(UID) &&
+          !item.upvoters.includes(UID)
+        ) {
+          collRef.doc(item.key).update({
+            votes: store.FieldValue.increment(1),
+            upvoters: [...item.upvoters, UID],
+            totalUpvotes: store.FieldValue.increment(1)
           });
-      })
-      .catch(error => {
-        if (error.code) {
-          showModalError(true);
-          setModalErrorText(error.message);
+        } else if (
+          i === o &&
+          !item.downvoters.includes(UID) &&
+          item.upvoters.includes(UID)
+        ) {
+          collRef.doc(item.key).update({
+            votes: store.FieldValue.increment(-1),
+            upvoters: item.upvoters.filter(val => val !== UID),
+            totalUpvotes: store.FieldValue.increment(-1)
+          });
+        } else if (
+          i === o &&
+          item.downvoters.includes(UID) &&
+          !item.upvoters.includes(UID)
+        ) {
+          collRef.doc(item.key).update({
+            votes: store.FieldValue.increment(2),
+            upvoters: [...item.upvoters, UID],
+            downvoters: item.downvoters.filter(val => val !== UID),
+            totalUpvotes: store.FieldValue.increment(1),
+            totalDownvotes: store.FieldValue.increment(-1)
+          });
         }
-      });
-  };
-
-  const onSignOut = () => {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        isLoggedIn(false);
-        showSignOutSnackBar(true);
-        setTimeout(() => {
-          showSignOutSnackBar(false);
-        }, 2400);
+        return item;
       })
-      .catch(error => {
-        console.log(error);
-      });
-  };
-  const closeModal = () => {
-    setShowModal(false);
-    showModalError(false);
-    setVerifiedPassword("");
+    );
   };
 
-  const snackBars = () => (
+  const onFilmDownvote = i => {
+    const collRef = db.collection("filmOptions");
+    setFilmArr(prevFilmArr =>
+      prevFilmArr.map((item, o) => {
+        if (
+          i === o &&
+          !item.downvoters.includes(UID) &&
+          !item.upvoters.includes(UID)
+        ) {
+          collRef.doc(item.key).update({
+            votes: store.FieldValue.increment(-1),
+            downvoters: [...item.downvoters, UID],
+            totalDownvotes: store.FieldValue.increment(1)
+          });
+        } else if (
+          i === o &&
+          item.downvoters.includes(UID) &&
+          !item.upvoters.includes(UID)
+        ) {
+          collRef.doc(item.key).update({
+            votes: store.FieldValue.increment(1),
+            downvoters: item.downvoters.filter(val => val !== UID),
+            totalDownvotes: store.FieldValue.increment(-1)
+          });
+        } else if (
+          i === o &&
+          !item.downvoters.includes(UID) &&
+          item.upvoters.includes(UID)
+        ) {
+          collRef.doc(item.key).update({
+            votes: store.FieldValue.increment(-2),
+            downvoters: [...item.downvoters, UID],
+            upvoters: item.upvoters.filter(val => val !== UID),
+            totalDownvoets: store.FieldValue.increment(1),
+            totalUpvotes: store.FieldValue.increment(-1)
+          });
+        }
+        return item;
+      })
+    );
+  };
+
+  const signOutVote = () => {
+    showSignInSnackBar(true);
+    setTimeout(() => {
+      showSignInSnackBar(false);
+    }, 2400);
+  };
+
+  const filmRankerMain = () => (
     <>
-      <SnackBar
-        snackBarVisibility={deletionSnackBar}
-        text="Your account has been successfully deleted"
-      />
-      <SnackBar
-        snackBarVisibility={signOutSnackBar}
-        text="Sign-out successful"
-      />
+      <PositionList targetArray={filmArr} />
+
+      <div className="flexMain topMar100">
+        {filmArr.map((item, i) => (
+          <div className={item.styles} key={item.key}>
+            <b>
+              <p className="titleSize">{item.name}</p>
+            </b>
+            <VotingButtons
+              upvotes={item.totalUpvotes}
+              downvotes={item.totalDownvotes}
+              loggedIn={loggedIn}
+              loggedInUpvote={() => onFilmUpvote(i)}
+              loggedInDownvote={() => onFilmDownvote(i)}
+              upvoteClass={
+                item.upvoters.includes(UID) ? "icon iconActive" : "icon"
+              }
+              downvoteClass={
+                item.downvoters.includes(UID) ? "icon iconActive" : "icon"
+              }
+              votes={item.votes}
+              signedOutVote={signOutVote}
+            />
+          </div>
+        ))}
+      </div>
     </>
   );
+  /*
+Thanos, Iron Man, Hulk, Captain America, Thor, Loki, Ant-man, 
+Doctor Strange, Spider-man, The Wasp, Cptn Marvel, Red Skull, Black Panther,
+Star-Lord, Gamora, Rocket, Groot, Drax, Mantis, Vision, Hawkeye,
+Black Widow, Nebula, Ebony Maw, Falcon, Winter Soldier, Ultron, VALKYRIE
 
-  const modalComponent = () => (
+  */
+
+  const addData = () => {
+    db.collection("filmOptions")
+      .doc("Avengers 4")
+      .set({
+        name: "Avengers: Endgame (2019)",
+        upvoters: [],
+        downvoters: [],
+        totalUpvotes: 0,
+        totalDownvotes: 0,
+        votes: 0,
+        styles: "na"
+      })
+      .then(function() {
+        console.log("Document successfully written!");
+      })
+      .catch(function(error) {
+        console.error("Error writing document: ", error);
+      });
+  };
+
+  const rankerMain = () => (
     <>
-      <Modal
-        title="Verify Password"
-        onSubmit={onDeleteAccount}
-        onClose={closeModal}
-        submitTitle="Delete my account"
-        showModal={showModal}
-      >
-        <p>You must verify your password to delete your account. </p>
-
-        {modalError && <p className="error">{modalErrorText}</p>}
-        <label htmlFor="email">Email:</label>
-
-        <TextBox
-          readOnly={true}
-          type="email"
-          name="email"
-          value={USER ? USER.email : ""}
-        />
-        <label htmlFor="password">Password:</label>
-        <TextBox
-          type="password"
-          name="password"
-          value={verifiedPassword}
-          onChange={e => setVerifiedPassword(e.target.value)}
-        />
-      </Modal>
+      <PositionList targetArray={heroesArr} />
+      <div className="flexMain topMar100">
+        <button onClick={addData}>Add data</button>
+        {heroesArr.map((item, i) => (
+          <div className={item.styles} key={item.key}>
+            <b>
+              <p className="titleSize">{item.name}</p>
+            </b>
+            <VotingButtons
+              upvotes={item.totalUpvotes}
+              downvotes={item.totalDownvotes}
+              loggedIn={loggedIn}
+              loggedInUpvote={() => onCharacterUpVote(i)}
+              loggedInDownvote={() => onCharacterDownVote(i)}
+              upvoteClass={
+                item.upvoters.includes(UID) ? "icon iconActive" : "icon"
+              }
+              downvoteClass={
+                item.downvoters.includes(UID) ? "icon iconActive" : "icon"
+              }
+              votes={item.votes}
+              signedOutVote={signOutVote}
+            />
+          </div>
+        ))}
+      </div>
     </>
   );
 
   return (
     <>
-      {loggedIn && (
-        <>
-          <div className="appCenter">
-            <button className="appDirectives" onClick={onSignOut}>
-              Sign Out
-            </button>
-            <button
-              className="appDirectives"
-              onClick={() => setShowModal(true)}
-            >
-              Delete Your Account
-            </button>
-          </div>
-        </>
-      )}
-      <div className="topMar100">
-        {heroesArr.map((item, i) => (
-          <React.Fragment key={i}>
-            <p>{item.Name}</p>
-            <p>{item.votes}</p>
-            {item.downvoters.includes(UID) && <p>this has been downvoted</p>}
-            {item.upvoters.includes(UID) && <p>this has been upvoted</p>}
-            {loggedIn && (
-              <>
-                <Button onClick={() => onDownVote(i)}>Downvote</Button>
-                <button onClick={() => onUpVote(i)}>Upvote</button>
-              </>
-            )}
+      <SwitchButtons
+        switchState={switchState}
+        onClickLeft={() => setSwitchState(true)}
+        onClickRight={() => setSwitchState(false)}
+      />
 
-            {!loggedIn && <Button>User signed out</Button>}
-          </React.Fragment>
-        ))}
-      </div>
-      {modalComponent()}
-      {snackBars()}
+      {switchState && rankerMain()}
+      {!switchState && filmRankerMain()}
+      <SnackBar
+        snackBarVisibility={signInSnackBar}
+        text="You must login to vote"
+      />
     </>
   );
 }
