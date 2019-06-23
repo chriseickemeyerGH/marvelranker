@@ -10,66 +10,69 @@ const VotingButtons = ({
   upvoteClass,
   downvoteClass,
   votes,
-  signedOutVote,
-  upvotes,
-  downvotes
+  signedOutVote
 }) => {
   return (
-    <>
+    <div className="votingPosition inline">
       {loggedIn && (
-        <>
-          <span>({upvotes})</span>
-          <FontAwesomeIcon
-            onClick={loggedInUpvote}
-            title="Upvote"
-            aria-hidden="true"
-            icon="angle-double-up"
-            size="2x"
-            className={upvoteClass}
-          />
-          <ScreenReader>Upvote</ScreenReader>
-          <p className="votePosition">{votes}</p>
-          <FontAwesomeIcon
-            onClick={loggedInDownvote}
-            title="Downvote"
-            aria-hidden="true"
-            icon="angle-double-down"
-            size="2x"
-            className={downvoteClass}
-          />
-          <span>({downvotes})</span>
-          <ScreenReader>Downvote</ScreenReader>
-        </>
+        <div className="buttonBunch">
+          <div className="inline icons">
+            <FontAwesomeIcon
+              onClick={loggedInUpvote}
+              title="Upvote"
+              aria-hidden="true"
+              icon="angle-double-up"
+              className={upvoteClass}
+            />
+
+            <br />
+            <ScreenReader>Upvote</ScreenReader>
+            <FontAwesomeIcon
+              onClick={loggedInDownvote}
+              title="Downvote"
+              aria-hidden="true"
+              icon="angle-double-down"
+              className={downvoteClass}
+            />
+
+            <ScreenReader>Downvote</ScreenReader>
+          </div>
+          <span className="votePosition inline">
+            {votes > 999 ? `${votes / 1000}k` : votes}
+          </span>
+        </div>
       )}
 
       {!loggedIn && (
-        <>
-          <p>Upvotes</p>
-          <span>({upvotes})</span>
-          <FontAwesomeIcon
-            onClick={signedOutVote}
-            title="You must be logged in to upvote"
-            aria-hidden="true"
-            icon="angle-double-up"
-            size="2x"
-            className="icon"
-          />
-          <ScreenReader>You must be logged in to upvote</ScreenReader>
-          <p className="votePosition">{votes}</p>
-          <FontAwesomeIcon
-            onClick={signedOutVote}
-            title="You must be logged in to downvote"
-            aria-hidden="true"
-            icon="angle-double-down"
-            size="2x"
-            className="icon"
-          />
-          <span>({downvotes})</span>
-          <p>Downvotes</p>
-          <ScreenReader>You must be logged in to downvote</ScreenReader>
-        </>
+        <div className="buttonBunch">
+          <div className="inline icons">
+            <FontAwesomeIcon
+              onClick={signedOutVote}
+              title="You must be logged in to upvote"
+              aria-hidden="true"
+              icon="angle-double-up"
+              size="2x"
+              className="icon"
+            />
+            <br />
+            <ScreenReader>You must be logged in to upvote</ScreenReader>
+
+            <FontAwesomeIcon
+              onClick={signedOutVote}
+              title="You must be logged in to downvote"
+              aria-hidden="true"
+              icon="angle-double-down"
+              size="2x"
+              className="icon"
+            />
+            <ScreenReader>You must be logged in to downvote</ScreenReader>
+          </div>
+          <span className="votePosition inline">
+            {votes > 999 ? `${votes / 1000}k` : votes}
+          </span>
+        </div>
       )}
-    </>
+    </div>
   );
 };
 

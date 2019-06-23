@@ -1,7 +1,13 @@
 .titleSize {
   font-size: 18px;
+  position: relative;
+  top: -8px;
 }
-
+@media screen and (max-width: 600px) {
+  .titleSize {
+    font-size: 13px;
+  }
+}
 .topMar100 {
   margin-top: 150px;
 }
@@ -17,32 +23,51 @@
   align-items: center;
 }
 
-.flexMain > div {
-  width: 50%;
-  text-align: center;
-  margin: 10px;
-  padding: 5px 10px 30px 10px;
-  border-radius: 5px;
-  box-sizing: border-box;
-  height: 125px;
+.flexMainChild {
+  margin-bottom: 10px;
+  height: 50px;
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
+    0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12);
+  background-color: white;
+  width: 500px;
 }
 
 @media screen and (max-width: 600px) {
-  .flexMain > div {
-    width: 80%;
+  .flexMainChild {
+    width: 98%;
+    margin-right: 5px;
+    margin-left: 5px;
   }
+}
+.inline {
+  display: inline-block;
 }
 
 .iconActive {
-  color: rgb(121, 121, 121);
+  color: rgb(228, 117, 117);
 }
 
-/* dynamic content styles */
+/* dynamic content styles 
 .textWhite {
   color: white;
 }
 .textGold {
   color: gold;
+}
+.textBlue {
+  color: rgb(5, 5, 226);
+}
+.textRed {
+  color: red;
+}
+.textPurple {
+  color: rgb(160, 7, 160);
+}
+.textOrangeRed {
+  color: rgb(255, 51, 0);
+}
+.textDarkRed {
+  color: rgb(190, 43, 43);
 }
 
 .backgroundGreen {
@@ -57,3 +82,16 @@
 .backgroundPurple {
   background-color: rgb(128, 70, 128);
 }
+.backgroundBlack {
+  background-color: black;
+}
+.backgroundBlueViolet {
+  background-color: rgb(71, 31, 248);
+}
+.backgroundGreyBlue {
+  background-color: rgb(38, 31, 139);
+}
+.backgroundGray {
+  background-color: rgb(66, 66, 66);
+}
+*/

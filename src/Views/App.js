@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import firebase from "../firebase.js";
 import SnackBar from "../Components/SnackBar";
-import PositionList from "../Components/PositionList";
+
 import VotingButtons from "../Components/VotingButtons";
 import SwitchButtons from "../Components/SwitchButtons";
-//import Spinner from "../Components/Spinner";
+import Spinner from "../Components/Spinner";
 import "../css/Views/App.css";
 
 function App() {
@@ -14,6 +14,7 @@ function App() {
   const [UID, setUID] = useState("");
   const [switchState, setSwitchState] = useState(true);
   const [signInSnackBar, showSignInSnackBar] = useState(false);
+  const [loading, isLoading] = useState("");
 
   const db = firebase.firestore();
 
@@ -32,21 +33,14 @@ function App() {
   }, []);
 
   useEffect(() => {
+    isLoading(true);
     db.collection("characterOptions")
       .orderBy("votes", "desc")
       .onSnapshot(
         coll => {
           const newHeroes = [];
           coll.forEach(doc => {
-            const {
-              name,
-              votes,
-              upvoters,
-              downvoters,
-              styles,
-              totalUpvotes,
-              totalDownvotes
-            } = doc.data();
+            const { name, votes, upvoters, downvoters, styles } = doc.data();
             newHeroes.push({
               key: doc.id,
               doc,
@@ -54,12 +48,11 @@ function App() {
               votes,
               upvoters,
               downvoters,
-              styles,
-              totalUpvotes,
-              totalDownvotes
+              styles
             });
           });
           setHeroesArr(newHeroes);
+          isLoading(false);
         },
         error => {
           alert("Error fetching character data: ", error);
@@ -68,21 +61,14 @@ function App() {
   }, [db]);
 
   useEffect(() => {
+    isLoading(true);
     db.collection("filmOptions")
       .orderBy("votes", "desc")
       .onSnapshot(
         coll => {
           const newFilms = [];
           coll.forEach(doc => {
-            const {
-              name,
-              votes,
-              upvoters,
-              downvoters,
-              styles,
-              totalUpvotes,
-              totalDownvotes
-            } = doc.data();
+            const { name, votes, upvoters, downvoters, styles } = doc.data();
             newFilms.push({
               key: doc.id,
               doc,
@@ -90,12 +76,11 @@ function App() {
               votes,
               upvoters,
               downvoters,
-              styles,
-              totalUpvotes,
-              totalDownvotes
+              styles
             });
           });
           setFilmArr(newFilms);
+          isLoading(false);
         },
         error => {
           alert("Error fetching film data: ", error);
@@ -264,7 +249,7 @@ function App() {
             votes: store.FieldValue.increment(-2),
             downvoters: [...item.downvoters, UID],
             upvoters: item.upvoters.filter(val => val !== UID),
-            totalDownvoets: store.FieldValue.increment(1),
+            totalDownvotes: store.FieldValue.increment(1),
             totalUpvotes: store.FieldValue.increment(-1)
           });
         }
@@ -280,44 +265,16 @@ function App() {
     }, 2400);
   };
 
-  const filmRankerMain = () => (
-    <>
-      <PositionList targetArray={filmArr} />
-
-      <div className="flexMain topMar100">
-        {filmArr.map((item, i) => (
-          <div className={item.styles} key={item.key}>
-            <b>
-              <p className="titleSize">{item.name}</p>
-            </b>
-            <VotingButtons
-              upvotes={item.totalUpvotes}
-              downvotes={item.totalDownvotes}
-              loggedIn={loggedIn}
-              loggedInUpvote={() => onFilmUpvote(i)}
-              loggedInDownvote={() => onFilmDownvote(i)}
-              upvoteClass={
-                item.upvoters.includes(UID) ? "icon iconActive" : "icon"
-              }
-              downvoteClass={
-                item.downvoters.includes(UID) ? "icon iconActive" : "icon"
-              }
-              votes={item.votes}
-              signedOutVote={signOutVote}
-            />
-          </div>
-        ))}
-      </div>
-    </>
-  );
   /*
 Thanos, Iron Man, Hulk, Captain America, Thor, Loki, Ant-man, 
 Doctor Strange, Spider-man, The Wasp, Cptn Marvel, Red Skull, Black Panther,
 Star-Lord, Gamora, Rocket, Groot, Drax, Mantis, Vision, Hawkeye,
-Black Widow, Nebula, Ebony Maw, Falcon, Winter Soldier, Ultron, VALKYRIE
+Black Widow, Nebula, Ebony Maw, Falcon, Winter Soldier, Ultron, Valkyrie, 
+Nick Fury, Erik Killmonger, Yon-Rogg, The Vulture, Scarlet Witch
+
 
   */
-
+  /*
   const addData = () => {
     db.collection("filmOptions")
       .doc("Avengers 4")
@@ -338,19 +295,14 @@ Black Widow, Nebula, Ebony Maw, Falcon, Winter Soldier, Ultron, VALKYRIE
       });
   };
 
+  */
   const rankerMain = () => (
     <>
-      <PositionList targetArray={heroesArr} />
+      {loading && <Spinner />}
       <div className="flexMain topMar100">
-        <button onClick={addData}>Add data</button>
         {heroesArr.map((item, i) => (
-          <div className={item.styles} key={item.key}>
-            <b>
-              <p className="titleSize">{item.name}</p>
-            </b>
+          <div className="flexMainChild" key={item.key}>
             <VotingButtons
-              upvotes={item.totalUpvotes}
-              downvotes={item.totalDownvotes}
               loggedIn={loggedIn}
               loggedInUpvote={() => onCharacterUpVote(i)}
               loggedInDownvote={() => onCharacterDownVote(i)}
@@ -363,6 +315,37 @@ Black Widow, Nebula, Ebony Maw, Falcon, Winter Soldier, Ultron, VALKYRIE
               votes={item.votes}
               signedOutVote={signOutVote}
             />
+            <b className="inline titleSize">
+              <p>{`${i + 1}. ${item.name}`}</p>
+            </b>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+
+  const filmRankerMain = () => (
+    <>
+      {loading && <Spinner />}
+      <div className="flexMain topMar100">
+        {filmArr.map((item, i) => (
+          <div className="flexMainChild" key={item.key}>
+            <VotingButtons
+              loggedIn={loggedIn}
+              loggedInUpvote={() => onFilmUpvote(i)}
+              loggedInDownvote={() => onFilmDownvote(i)}
+              upvoteClass={
+                item.upvoters.includes(UID) ? "icon iconActive" : "icon"
+              }
+              downvoteClass={
+                item.downvoters.includes(UID) ? "icon iconActive" : "icon"
+              }
+              votes={item.votes}
+              signedOutVote={signOutVote}
+            />
+            <b className="inline titleSize">
+              <p>{`${i + 1}. ${item.name}`}</p>
+            </b>
           </div>
         ))}
       </div>

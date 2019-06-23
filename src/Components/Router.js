@@ -1,5 +1,5 @@
 import { Route } from "react-router-dom";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import App from "../Views/App";
 import Login from "../Views/Auth/Login";
 import SignUp from "../Views/Auth/SignUp";
