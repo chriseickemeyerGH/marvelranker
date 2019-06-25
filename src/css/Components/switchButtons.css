@@ -18,10 +18,9 @@
   opacity: 1;
 }
 .centerSwitchButtons {
-  position: absolute;
-  left: 50%;
-  top: 80px;
-  margin-left: -150px;
+  margin-top: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 200px;
   text-align: center;
-  width: 300px;
 }

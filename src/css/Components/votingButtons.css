@@ -1,15 +1,16 @@
 .icon {
   margin: 0 5px;
   cursor: pointer;
-  font-size: 1.1em;
+  font-size: 1.3em;
+  user-select: none;
 }
 .icons {
   position: relative;
-  top: 3px;
+  top: 4px;
 }
 
 .votePosition {
-  font-size: 14px;
+  font-size: 18px;
   position: relative;
   top: -9px;
 }

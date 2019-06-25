@@ -38,7 +38,7 @@ const VotingButtons = ({
             <ScreenReader>Downvote</ScreenReader>
           </div>
           <span className="votePosition inline">
-            {votes > 999 ? `${votes / 1000}k` : votes}
+            {votes > 999 ? `${(votes / 1000).toFixed(1)}k` : votes}
           </span>
         </div>
       )}
@@ -68,7 +68,7 @@ const VotingButtons = ({
             <ScreenReader>You must be logged in to downvote</ScreenReader>
           </div>
           <span className="votePosition inline">
-            {votes > 999 ? `${votes / 1000}k` : votes}
+            {votes > 999 ? `${(votes / 1000).toFixed(1)}k` : votes}
           </span>
         </div>
       )}

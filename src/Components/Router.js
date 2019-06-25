@@ -10,6 +10,7 @@ import { RouterLink, RouterButton } from "./RouterLinks";
 import SnackBar from "./SnackBar";
 import Modal from "./Modal";
 import TextBox from "./TextBox";
+import Footer from "./Footer";
 
 function Router() {
   const [loggedIn, isLoggedIn] = useState("");
@@ -138,17 +139,24 @@ function Router() {
           </>
         )}
       </div>
+      <section id="page-container">
+        <div id="content-wrap">
+          <Route exact path={"/"} component={App} />
+          <Route exact path={"/login"} component={Login} />
+          <Route exact path={"/signup"} component={SignUp} />
 
-      <Route exact path={"/"} component={App} />
-      <Route exact path={"/login"} component={Login} />
-      <Route exact path={"/signup"} component={SignUp} />
-
-      {modalComponent()}
-      <SnackBar
-        snackBarVisibility={signOutSnackBar}
-        text="Sign out successful"
-      />
-      <SnackBar snackBarVisibility={deletionSnackBar} text="Account deleted!" />
+          {modalComponent()}
+          <SnackBar
+            snackBarVisibility={signOutSnackBar}
+            text="Sign out successful"
+          />
+          <SnackBar
+            snackBarVisibility={deletionSnackBar}
+            text="Account deleted!"
+          />
+        </div>
+        <Footer />
+      </section>
     </>
   );
 }

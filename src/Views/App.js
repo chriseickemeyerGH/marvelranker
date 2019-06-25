@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import firebase from "../firebase.js";
 import SnackBar from "../Components/SnackBar";
-
 import VotingButtons from "../Components/VotingButtons";
 import SwitchButtons from "../Components/SwitchButtons";
 import Spinner from "../Components/Spinner";
+import Button from "../Components/Button";
 import "../css/Views/App.css";
 
 function App() {
@@ -15,8 +15,10 @@ function App() {
   const [switchState, setSwitchState] = useState(true);
   const [signInSnackBar, showSignInSnackBar] = useState(false);
   const [loading, isLoading] = useState("");
+  const [filmState, setFilmState] = useState(true);
+  const [charState, setCharState] = useState(true);
 
-  const db = firebase.firestore();
+  const [db] = useState(firebase.firestore());
 
   useEffect(() => {
     const listener = firebase.auth().onAuthStateChanged(user => {
@@ -33,62 +35,138 @@ function App() {
   }, []);
 
   useEffect(() => {
-    isLoading(true);
-    db.collection("characterOptions")
-      .orderBy("votes", "desc")
-      .onSnapshot(
-        coll => {
-          const newHeroes = [];
-          coll.forEach(doc => {
-            const { name, votes, upvoters, downvoters, styles } = doc.data();
-            newHeroes.push({
-              key: doc.id,
-              doc,
-              name,
-              votes,
-              upvoters,
-              downvoters,
-              styles
+    if (charState) {
+      isLoading(true);
+      const unsubscribe = db
+        .collection("characterOptions")
+        .orderBy("votes", "desc")
+        .onSnapshot(
+          coll => {
+            const newHeroes = [];
+            coll.forEach(doc => {
+              const { name, votes, upvoters, downvoters } = doc.data();
+              newHeroes.push({
+                key: doc.id,
+                doc,
+                name,
+                votes,
+                upvoters,
+                downvoters
+              });
             });
-          });
-          setHeroesArr(newHeroes);
-          isLoading(false);
-        },
-        error => {
-          alert("Error fetching character data: ", error);
-        }
-      );
-  }, [db]);
+            setHeroesArr(newHeroes);
+            isLoading(false);
+          },
+          error => {
+            alert("Error fetching character data: ", error);
+          }
+        );
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [db, charState]);
 
   useEffect(() => {
-    isLoading(true);
-    db.collection("filmOptions")
-      .orderBy("votes", "desc")
-      .onSnapshot(
-        coll => {
-          const newFilms = [];
-          coll.forEach(doc => {
-            const { name, votes, upvoters, downvoters, styles } = doc.data();
-            newFilms.push({
-              key: doc.id,
-              doc,
-              name,
-              votes,
-              upvoters,
-              downvoters,
-              styles
+    if (!charState) {
+      isLoading(true);
+      const unsubscribe = db
+        .collection("characterOptions")
+        .orderBy("name", "asc")
+        .onSnapshot(
+          coll => {
+            const newHeroes = [];
+            coll.forEach(doc => {
+              const { name, votes, upvoters, downvoters } = doc.data();
+              newHeroes.push({
+                key: doc.id,
+                doc,
+                name,
+                votes,
+                upvoters,
+                downvoters
+              });
             });
-          });
-          setFilmArr(newFilms);
-          isLoading(false);
-        },
-        error => {
-          alert("Error fetching film data: ", error);
-        }
-      );
-  }, [db]);
+            setHeroesArr(newHeroes);
+            isLoading(false);
+          },
+          error => {
+            alert("Error fetching character data: ", error);
+          }
+        );
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [db, charState]);
 
-  const store = firebase.firestore;
+  useEffect(() => {
+    if (filmState) {
+      isLoading(true);
+      const unsubscribe = db
+        .collection("filmOptions")
+        .orderBy("votes", "desc")
+        .onSnapshot(
+          coll => {
+            const newFilms = [];
+            coll.forEach(doc => {
+              const { name, votes, upvoters, downvoters } = doc.data();
+              newFilms.push({
+                key: doc.id,
+                doc,
+                name,
+                votes,
+                upvoters,
+                downvoters
+              });
+            });
+            setFilmArr(newFilms);
+            isLoading(false);
+          },
+          error => {
+            alert("Error fetching character data: ", error);
+          }
+        );
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [db, filmState]);
+
+  useEffect(() => {
+    if (!filmState) {
+      isLoading(true);
+      const unsubscribe = db
+        .collection("filmOptions")
+        .orderBy("name", "asc")
+        .onSnapshot(
+          coll => {
+            const newFilms = [];
+            coll.forEach(doc => {
+              const { name, votes, upvoters, downvoters } = doc.data();
+              newFilms.push({
+                key: doc.id,
+                doc,
+                name,
+                votes,
+                upvoters,
+                downvoters
+              });
+            });
+            setFilmArr(newFilms);
+            isLoading(false);
+          },
+          error => {
+            alert("Error fetching character data: ", error);
+          }
+        );
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [db, filmState]);
+
+  const storeVal = firebase.firestore.FieldValue;
 
   const onCharacterUpVote = i => {
     const collRef = db.collection("characterOptions");
@@ -100,9 +178,9 @@ function App() {
           !item.upvoters.includes(UID)
         ) {
           collRef.doc(item.key).update({
-            votes: store.FieldValue.increment(1),
-            upvoters: [...item.upvoters, UID],
-            totalUpvotes: store.FieldValue.increment(1)
+            votes: storeVal.increment(1),
+            upvoters: storeVal.arrayUnion(UID),
+            totalUpvotes: storeVal.increment(1)
           });
         } else if (
           i === o &&
@@ -110,9 +188,9 @@ function App() {
           item.upvoters.includes(UID)
         ) {
           collRef.doc(item.key).update({
-            votes: store.FieldValue.increment(-1),
-            upvoters: item.upvoters.filter(val => val !== UID),
-            totalUpvotes: store.FieldValue.increment(-1)
+            votes: storeVal.increment(-1),
+            upvoters: storeVal.arrayRemove(UID),
+            totalUpvotes: storeVal.increment(-1)
           });
         } else if (
           i === o &&
@@ -120,11 +198,11 @@ function App() {
           !item.upvoters.includes(UID)
         ) {
           collRef.doc(item.key).update({
-            votes: store.FieldValue.increment(2),
-            upvoters: [...item.upvoters, UID],
-            downvoters: item.downvoters.filter(val => val !== UID),
-            totalUpvotes: store.FieldValue.increment(1),
-            totalDownvotes: store.FieldValue.increment(-1)
+            votes: storeVal.increment(2),
+            upvoters: storeVal.arrayUnion(UID),
+            downvoters: storeVal.arrayRemove(UID),
+            totalUpvotes: storeVal.increment(1),
+            totalDownvotes: storeVal.increment(-1)
           });
         }
         return item;
@@ -142,9 +220,9 @@ function App() {
           !item.upvoters.includes(UID)
         ) {
           collRef.doc(item.key).update({
-            votes: store.FieldValue.increment(-1),
-            downvoters: [...item.downvoters, UID],
-            totalDownvotes: store.FieldValue.increment(1)
+            votes: storeVal.increment(-1),
+            downvoters: storeVal.arrayUnion(UID),
+            totalDownvotes: storeVal.increment(1)
           });
         } else if (
           i === o &&
@@ -152,9 +230,9 @@ function App() {
           !item.upvoters.includes(UID)
         ) {
           collRef.doc(item.key).update({
-            votes: store.FieldValue.increment(1),
-            downvoters: item.downvoters.filter(val => val !== UID),
-            totalDownvotes: store.FieldValue.increment(-1)
+            votes: storeVal.increment(1),
+            downvoters: storeVal.arrayRemove(UID),
+            totalDownvotes: storeVal.increment(-1)
           });
         } else if (
           i === o &&
@@ -162,11 +240,11 @@ function App() {
           item.upvoters.includes(UID)
         ) {
           collRef.doc(item.key).update({
-            votes: store.FieldValue.increment(-2),
-            downvoters: [...item.downvoters, UID],
-            upvoters: item.upvoters.filter(val => val !== UID),
-            totalDownvotes: store.FieldValue.increment(1),
-            totalUpvotes: store.FieldValue.increment(-1)
+            votes: storeVal.increment(-2),
+            downvoters: storeVal.arrayUnion(UID),
+            upvoters: storeVal.arrayRemove(UID),
+            totalDownvotes: storeVal.increment(1),
+            totalUpvotes: storeVal.increment(-1)
           });
         }
         return item;
@@ -184,9 +262,9 @@ function App() {
           !item.upvoters.includes(UID)
         ) {
           collRef.doc(item.key).update({
-            votes: store.FieldValue.increment(1),
-            upvoters: [...item.upvoters, UID],
-            totalUpvotes: store.FieldValue.increment(1)
+            votes: storeVal.increment(1),
+            upvoters: storeVal.arrayUnion(UID),
+            totalUpvotes: storeVal.increment(1)
           });
         } else if (
           i === o &&
@@ -194,9 +272,9 @@ function App() {
           item.upvoters.includes(UID)
         ) {
           collRef.doc(item.key).update({
-            votes: store.FieldValue.increment(-1),
-            upvoters: item.upvoters.filter(val => val !== UID),
-            totalUpvotes: store.FieldValue.increment(-1)
+            votes: storeVal.increment(-1),
+            upvoters: storeVal.arrayRemove(UID),
+            totalUpvotes: storeVal.increment(-1)
           });
         } else if (
           i === o &&
@@ -204,11 +282,11 @@ function App() {
           !item.upvoters.includes(UID)
         ) {
           collRef.doc(item.key).update({
-            votes: store.FieldValue.increment(2),
-            upvoters: [...item.upvoters, UID],
-            downvoters: item.downvoters.filter(val => val !== UID),
-            totalUpvotes: store.FieldValue.increment(1),
-            totalDownvotes: store.FieldValue.increment(-1)
+            votes: storeVal.increment(2),
+            upvoters: storeVal.arrayUnion(UID),
+            downvoters: storeVal.arrayRemove(UID),
+            totalUpvotes: storeVal.increment(1),
+            totalDownvotes: storeVal.increment(-1)
           });
         }
         return item;
@@ -226,9 +304,9 @@ function App() {
           !item.upvoters.includes(UID)
         ) {
           collRef.doc(item.key).update({
-            votes: store.FieldValue.increment(-1),
-            downvoters: [...item.downvoters, UID],
-            totalDownvotes: store.FieldValue.increment(1)
+            votes: storeVal.increment(-1),
+            downvoters: storeVal.arrayUnion(UID),
+            totalDownvotes: storeVal.increment(1)
           });
         } else if (
           i === o &&
@@ -236,9 +314,9 @@ function App() {
           !item.upvoters.includes(UID)
         ) {
           collRef.doc(item.key).update({
-            votes: store.FieldValue.increment(1),
-            downvoters: item.downvoters.filter(val => val !== UID),
-            totalDownvotes: store.FieldValue.increment(-1)
+            votes: storeVal.increment(1),
+            downvoters: storeVal.arrayRemove(UID),
+            totalDownvotes: storeVal.increment(-1)
           });
         } else if (
           i === o &&
@@ -246,11 +324,11 @@ function App() {
           item.upvoters.includes(UID)
         ) {
           collRef.doc(item.key).update({
-            votes: store.FieldValue.increment(-2),
-            downvoters: [...item.downvoters, UID],
-            upvoters: item.upvoters.filter(val => val !== UID),
-            totalDownvotes: store.FieldValue.increment(1),
-            totalUpvotes: store.FieldValue.increment(-1)
+            votes: storeVal.increment(-2),
+            downvoters: storeVal.arrayUnion(UID),
+            upvoters: storeVal.arrayRemove(UID),
+            totalDownvotes: storeVal.increment(1),
+            totalUpvotes: storeVal.increment(-1)
           });
         }
         return item;
@@ -265,41 +343,16 @@ function App() {
     }, 2400);
   };
 
-  /*
-Thanos, Iron Man, Hulk, Captain America, Thor, Loki, Ant-man, 
-Doctor Strange, Spider-man, The Wasp, Cptn Marvel, Red Skull, Black Panther,
-Star-Lord, Gamora, Rocket, Groot, Drax, Mantis, Vision, Hawkeye,
-Black Widow, Nebula, Ebony Maw, Falcon, Winter Soldier, Ultron, Valkyrie, 
-Nick Fury, Erik Killmonger, Yon-Rogg, The Vulture, Scarlet Witch
-
-
-  */
-  /*
-  const addData = () => {
-    db.collection("filmOptions")
-      .doc("Avengers 4")
-      .set({
-        name: "Avengers: Endgame (2019)",
-        upvoters: [],
-        downvoters: [],
-        totalUpvotes: 0,
-        totalDownvotes: 0,
-        votes: 0,
-        styles: "na"
-      })
-      .then(function() {
-        console.log("Document successfully written!");
-      })
-      .catch(function(error) {
-        console.error("Error writing document: ", error);
-      });
-  };
-
-  */
   const rankerMain = () => (
     <>
       {loading && <Spinner />}
-      <div className="flexMain topMar100">
+
+      <div className="centerButton">
+        <Button onClick={() => setCharState(!charState)}>
+          {charState ? "Sort by Name" : "Sort by Score"}
+        </Button>
+      </div>
+      <div className="flexMain">
         {heroesArr.map((item, i) => (
           <div className="flexMainChild" key={item.key}>
             <VotingButtons
@@ -316,7 +369,7 @@ Nick Fury, Erik Killmonger, Yon-Rogg, The Vulture, Scarlet Witch
               signedOutVote={signOutVote}
             />
             <b className="inline titleSize">
-              <p>{`${i + 1}. ${item.name}`}</p>
+              <p>{charState ? `${i + 1}. ${item.name}` : item.name}</p>
             </b>
           </div>
         ))}
@@ -327,7 +380,12 @@ Nick Fury, Erik Killmonger, Yon-Rogg, The Vulture, Scarlet Witch
   const filmRankerMain = () => (
     <>
       {loading && <Spinner />}
-      <div className="flexMain topMar100">
+      <div className=" centerButton">
+        <Button onClick={() => setFilmState(!filmState)}>
+          {filmState ? "Sort by Name" : "Sort by Score"}
+        </Button>{" "}
+      </div>
+      <div className="flexMain">
         {filmArr.map((item, i) => (
           <div className="flexMainChild" key={item.key}>
             <VotingButtons
@@ -344,7 +402,7 @@ Nick Fury, Erik Killmonger, Yon-Rogg, The Vulture, Scarlet Witch
               signedOutVote={signOutVote}
             />
             <b className="inline titleSize">
-              <p>{`${i + 1}. ${item.name}`}</p>
+              <p>{filmState ? `${i + 1}. ${item.name}` : item.name}</p>
             </b>
           </div>
         ))}
@@ -354,28 +412,30 @@ Nick Fury, Erik Killmonger, Yon-Rogg, The Vulture, Scarlet Witch
 
   return (
     <>
-      <SwitchButtons
-        switchState={switchState}
-        onClickLeft={() => setSwitchState(true)}
-        onClickRight={() => setSwitchState(false)}
-      />
+      <div style={{ textAlign: "center", marginTop: 80 }}>
+        <h1>Marvel Cinemative Universe/Avengers Character and Film Ranker</h1>
+        <p style={{ maxWidth: 800, margin: "auto" }}>
+          Using a Reddit-like upvote and downvote system, rank the MCU
+          characters and movies in order from best to worst, or from most-liked
+          to least-liked. The lists update in real-time!
+        </p>
+      </div>
+      <div className="marginBottom ">
+        <SwitchButtons
+          switchState={switchState}
+          onClickLeft={() => setSwitchState(true)}
+          onClickRight={() => setSwitchState(false)}
+        />
 
-      {switchState && rankerMain()}
-      {!switchState && filmRankerMain()}
-      <SnackBar
-        snackBarVisibility={signInSnackBar}
-        text="You must login to vote"
-      />
+        {switchState && rankerMain()}
+        {!switchState && filmRankerMain()}
+        <SnackBar
+          snackBarVisibility={signInSnackBar}
+          text="You must login to vote"
+        />
+      </div>
     </>
   );
 }
 
 export default App;
-
-/*
-/user: check url and then get url
-/add url to user data & add to url data collection
-/add all portfolio/blog data to url data collection
-/upon vising endpoint, use url params to query data from url collection
-
-*/

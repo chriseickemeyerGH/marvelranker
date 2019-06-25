@@ -4,14 +4,16 @@ import "./css/index.css";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter } from "react-router-dom";
 import Router from "./Components/Router";
+import { fab } from "@fortawesome/free-brands-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 
 import {
   faAngleDoubleUp,
-  faAngleDoubleDown
+  faAngleDoubleDown,
+  faHeart
 } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faAngleDoubleUp, faAngleDoubleDown);
+library.add(faAngleDoubleUp, faAngleDoubleDown, faHeart, fab);
 
 function Index() {
   return (

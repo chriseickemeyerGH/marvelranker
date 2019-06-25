@@ -34,7 +34,7 @@ const PassEmailForm = ({
       <h1>{title}</h1>
       <>{errorState && <p className="error">{errorMessage}</p>}</>
       <form>
-        <label htmlFor="email">Email</label>
+        <label htmlFor="email">Email:</label>
         <br />
         <TextBox
           type="email"
@@ -44,7 +44,7 @@ const PassEmailForm = ({
           onChange={onEmailChange}
         />
         <br />
-        <label htmlFor="password">Password</label>
+        <label htmlFor="password">Password:</label>
         <br />
         <TextBox
           type="password"

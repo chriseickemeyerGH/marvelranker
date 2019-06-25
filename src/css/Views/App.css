@@ -5,22 +5,21 @@
 }
 @media screen and (max-width: 600px) {
   .titleSize {
-    font-size: 13px;
+    font-size: 16px;
   }
-}
-.topMar100 {
-  margin-top: 150px;
 }
 
 .error {
   color: red;
-  font-size: 12px;
+  font-size: 14px;
+  margin-top: 0px;
+  margin-bottom: 5px;
 }
 
 .flexMain {
-  display: flex;
-  flex-flow: column;
-  align-items: center;
+  columns: 2;
+  margin: 30px auto;
+  width: 80%;
 }
 
 .flexMainChild {
@@ -29,14 +28,25 @@
   box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
     0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12);
   background-color: white;
-  width: 500px;
+}
+
+@media screen and (max-width: 1300px) {
+  .flexMain {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    width: 100%;
+  }
+  .flexMainChild {
+    width: 500px;
+  }
 }
 
 @media screen and (max-width: 600px) {
   .flexMainChild {
-    width: 98%;
-    margin-right: 5px;
+    width: 95%;
     margin-left: 5px;
+    margin-right: 5px;
   }
 }
 .inline {
@@ -46,52 +56,18 @@
 .iconActive {
   color: rgb(228, 117, 117);
 }
-
-/* dynamic content styles 
-.textWhite {
-  color: white;
+.marginBottom {
+  margin-bottom: 15px;
 }
-.textGold {
-  color: gold;
-}
-.textBlue {
-  color: rgb(5, 5, 226);
-}
-.textRed {
-  color: red;
-}
-.textPurple {
-  color: rgb(160, 7, 160);
-}
-.textOrangeRed {
-  color: rgb(255, 51, 0);
-}
-.textDarkRed {
-  color: rgb(190, 43, 43);
+.centerButton {
+  margin: 15px auto;
+  width: 300px;
+  text-align: center;
 }
 
-.backgroundGreen {
-  background-color: green;
+.textCenter {
+  text-align: center;
 }
-.backgroundRed {
-  background-color: rgb(199, 5, 5);
+.marginTop {
+  margin-top: 80px;
 }
-.backgroundBlue {
-  background-color: rgb(5, 5, 226);
-}
-.backgroundPurple {
-  background-color: rgb(128, 70, 128);
-}
-.backgroundBlack {
-  background-color: black;
-}
-.backgroundBlueViolet {
-  background-color: rgb(71, 31, 248);
-}
-.backgroundGreyBlue {
-  background-color: rgb(38, 31, 139);
-}
-.backgroundGray {
-  background-color: rgb(66, 66, 66);
-}
-*/

@@ -14,8 +14,8 @@
 }
 
 img {
-  width: 200px;
-  height: 46px;
+  width: 250px;
+  height: 56px;
 }
 img:hover {
   cursor: pointer;
@@ -27,4 +27,8 @@ img:hover {
 
 .disabled:disabled:hover {
   opacity: 0.5;
+}
+
+h1 {
+  font-size: 32px;
 }

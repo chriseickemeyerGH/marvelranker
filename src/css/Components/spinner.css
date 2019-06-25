@@ -12,12 +12,12 @@
 .loader {
   color: #201e1e;
   font-size: 10px;
-  margin: 80px auto;
+  margin: 80px auto 80px -10px;
   position: absolute;
-  z-index: -5;
-  top: 140px;
+  z-index: 20;
+  top: 190px;
   left: 50%;
-  margin-left: -10px;
+
   text-indent: -9999em;
   -webkit-transform: translateZ(0);
   -ms-transform: translateZ(0);
