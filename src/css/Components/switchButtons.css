@@ -39,3 +39,19 @@
     margin-left: 50px;
   }
 }
+
+/*  iphone 5 /se */
+@media screen and (device-width: 320px) and (device-height: 568px) {
+  .centerSwitchButtons {
+    margin-right: 50px;
+    margin-left: 50px;
+  }
+}
+
+/*  iphone 6/7/8e */
+@media screen and (device-width: 375px) and (device-height: 667px) {
+  .centerSwitchButtons {
+    margin-right: 50px;
+    margin-left: 50px;
+  }
+}
