@@ -376,7 +376,7 @@ function App() {
       </div>
     </>
   );
-
+  //tester
   const filmRankerMain = () => (
     <>
       {loading && <Spinner />}
@@ -401,6 +401,7 @@ function App() {
               votes={item.votes}
               signedOutVote={signOutVote}
             />
+
             <b className="inline titleSize">
               <p>{filmState ? `${i + 1}. ${item.name}` : item.name}</p>
             </b>

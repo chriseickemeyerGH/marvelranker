@@ -19,7 +19,9 @@ footer {
   width: 20px;
   margin-left: -20px;
 }
-/* iphone x */
+
+/*
+ iphone x 
 @media only screen and (min-device-width: 375px) and (max-device-width: 812px) and (-webkit-min-device-pixel-ratio: 3) {
   footer {
     width: 106%;
@@ -28,7 +30,7 @@ footer {
     left: calc(106% / 2);
   }
 }
-/*galaxy s5 */
+galaxy s5 
 @media only screen and (device-width: 360px) and (device-height: 640px) and (-webkit-device-pixel-ratio: 3) {
   footer {
     width: 111%;
@@ -37,7 +39,7 @@ footer {
     left: calc(111% / 2);
   }
 }
-/*  iphone 5 /se */
+  iphone 5 /se 
 @media screen and (device-width: 320px) and (device-height: 568px) {
   footer {
     width: 120%;
@@ -47,7 +49,7 @@ footer {
   }
 }
 
-/*  iphone 6/7/8e */
+ iphone 6/7/8e 
 @media screen and (device-width: 375px) and (device-height: 667px) {
   footer {
     width: 107%;
@@ -56,3 +58,4 @@ footer {
     left: calc(107% / 2);
   }
 }
+*/

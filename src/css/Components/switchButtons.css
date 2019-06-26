@@ -5,12 +5,12 @@
 
 .leftButton {
   border-radius: 5px 0 0 5px;
-  width: 150px;
+  width: calc(275px / 2);
 }
 
 .rightButton {
   border-radius: 0 5px 5px 0;
-  width: 150px;
+  width: calc(275px / 2);
 }
 
 .leftButton:hover,
@@ -21,18 +21,18 @@
   margin-top: 30px;
   margin-left: auto;
   margin-right: auto;
-  width: 300px;
+  width: 275px;
   text-align: center;
 }
 
-/* iphone x */
+/* 
 @media only screen and (min-device-width: 375px) and (max-device-width: 812px) and (-webkit-min-device-pixel-ratio: 3) {
   .centerSwitchButtons {
     margin-right: 50px;
     margin-left: 50px;
   }
 }
-/* galaxy s5 */
+/* galaxy s
 @media only screen and (device-width: 360px) and (device-height: 640px) and (-webkit-device-pixel-ratio: 3) {
   .centerSwitchButtons {
     margin-right: 50px;
@@ -40,7 +40,7 @@
   }
 }
 
-/*  iphone 5 /se */
+/*  iphone 5 /se 
 @media screen and (device-width: 320px) and (device-height: 568px) {
   .centerSwitchButtons {
     margin-right: 50px;
@@ -48,10 +48,11 @@
   }
 }
 
-/*  iphone 6/7/8e */
+/*  iphone 6/7/8e 
 @media screen and (device-width: 375px) and (device-height: 667px) {
   .centerSwitchButtons {
     margin-right: 50px;
     margin-left: 50px;
   }
 }
+*/

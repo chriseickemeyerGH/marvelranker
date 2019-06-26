@@ -23,9 +23,9 @@
 .centerTheRouter {
   text-align: center;
   position: absolute;
-  width: 400px;
+  width: 300px;
   left: 50%;
-  margin-left: -200px;
+  margin-left: -150px;
 }
 .routerLinkCenter {
   top: 15px;
@@ -39,20 +39,20 @@
   cursor: pointer;
 }
 
-/* iphone x */
+/* iphone x 
 @media only screen and (min-device-width: 375px) and (max-device-width: 812px) {
   .centerTheRouter {
     left: calc(106% / 2);
   }
 }
-/* galaxy s5 */
+ galaxy s5 
 @media only screen and (device-width: 360px) and (device-height: 640px) and (-webkit-device-pixel-ratio: 3) {
   .centerTheRouter {
     left: calc(111% / 2);
   }
 }
 
-/*  iphone 5 /se */
+ iphone 5 /se 
 @media only screen and (device-width: 320px) and (device-height: 568px) {
   .centerTheRouter {
     left: 50%;
@@ -60,9 +60,10 @@
   }
 }
 
-/*  iphone 6/7/8e */
+  iphone 6/7/8e 
 @media screen and (device-width: 375px) and (device-height: 667px) {
   .centerTheRouter {
     left: calc(106% / 2);
   }
 }
+*/

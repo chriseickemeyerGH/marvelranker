@@ -32,25 +32,26 @@ img:hover {
 h1 {
   font-size: 32px;
 }
-/* iphone x */
+/* iphone x 
 @media only screen and (min-device-width: 375px) and (max-device-width: 812px) and (-webkit-min-device-pixel-ratio: 3) {
   .marginOffset {
     text-align: center;
   }
 }
-/* galaxy s5 */
+/* galaxy s5 
 @media only screen and (device-width: 360px) and (device-height: 640px) and (-webkit-device-pixel-ratio: 3) {
 }
-/*  iphone 5 /se */
+/*  iphone 5 /se 
 @media only screen and (device-width: 320px) and (device-height: 568px) {
   .marginOffset {
     margin-left: 60px;
   }
 }
 
-/*  iphone 6/7/8e */
+/*  iphone 6/7/8e 
 @media screen and (device-width: 375px) and (device-height: 667px) {
   .marginOffset {
     margin-left: 25px;
   }
 }
+*/
