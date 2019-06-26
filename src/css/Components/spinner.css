@@ -25,6 +25,18 @@
   -webkit-animation-delay: -0.16s;
   animation-delay: -0.16s;
 }
+
+@media screen and (max-width: 900px) {
+  .loader {
+    top: 270px;
+  }
+}
+@media screen and (max-width: 500px) {
+  .loader {
+    top: 350px;
+  }
+}
+
 .loader:before,
 .loader:after {
   content: "";
@@ -57,5 +69,18 @@
   }
   40% {
     box-shadow: 0 2.5em 0 0;
+  }
+}
+
+/* iphone x */
+@media only screen and (min-device-width: 375px) and (max-device-width: 812px) and (-webkit-min-device-pixel-ratio: 3) {
+  .loader {
+    margin-left: -5px;
+  }
+}
+/* galaxy s5 */
+@media only screen and (device-width: 360px) and (device-height: 640px) and (-webkit-device-pixel-ratio: 3) {
+  .loader {
+    margin-left: 5px;
   }
 }

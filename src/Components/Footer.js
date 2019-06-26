@@ -1,34 +1,27 @@
 import React from "react";
-//import "../css/Components/footer.css";
+import "../css/Components/footer.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-const footerStyle = {
-  position: "absolute",
-  bottom: 0,
-  width: "100%",
-  height: 50,
-  backgroundColor: "rgb(214, 214, 214)",
-  display: "flex",
-  flexFlow: "row nowrap",
-  justifyContent: "spaceAround"
-};
 
 const Footer = () => {
   return (
-    <footer style={footerStyle}>
-      <p style={{ width: "33.3%", marginLeft: 10 }}>
+    <footer>
+      <p className="marginLeft">
         Made with
         <FontAwesomeIcon
           aria-hidden="true"
           title="Made with love!"
           icon="heart"
-          style={{ marginLeft: 5 }}
+          className="footerHeart"
         />
       </p>
-      <p style={{ width: "33.3%", textAlign: "center" }}>
+      <a
+        className="repoLink"
+        href="https://gitlab.com/chris_eickemeyer/marvel-ranker"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         <FontAwesomeIcon icon={["fab", "gitlab"]} size="lg" />
-      </p>
-      <p style={{ width: "33.3%" }} />
+      </a>
     </footer>
   );
 };

@@ -32,3 +32,15 @@ img:hover {
 h1 {
   font-size: 32px;
 }
+/* iphone x */
+@media only screen and (min-device-width: 375px) and (max-device-width: 812px) and (-webkit-min-device-pixel-ratio: 3) {
+  .marginOffset {
+    text-align: center;
+  }
+}
+/* galaxy s5 */
+@media only screen and (device-width: 360px) and (device-height: 640px) and (-webkit-device-pixel-ratio: 3) {
+  .marginOffset {
+    text-align: center;
+  }
+}

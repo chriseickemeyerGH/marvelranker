@@ -412,9 +412,9 @@ function App() {
 
   return (
     <>
-      <div style={{ textAlign: "center", marginTop: 80 }}>
+      <div className="textCenter headerTop">
         <h1>Marvel Cinemative Universe/Avengers Character and Film Ranker</h1>
-        <p style={{ maxWidth: 800, margin: "auto" }}>
+        <p>
           Using a Reddit-like upvote and downvote system, rank the MCU
           characters and movies in order from best to worst, or from most-liked
           to least-liked. The lists update in real-time!

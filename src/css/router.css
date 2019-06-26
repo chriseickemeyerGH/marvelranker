@@ -38,3 +38,16 @@
   font-size: 18px;
   cursor: pointer;
 }
+
+/* iphone x */
+@media only screen and (min-device-width: 375px) and (max-device-width: 812px) and (-webkit-min-device-pixel-ratio: 3) and (orientation: portrait) {
+  .centerTheRouter {
+    left: calc(106% / 2);
+  }
+}
+/* galaxy s5 */
+@media only screen and (device-width: 360px) and (device-height: 640px) and (-webkit-device-pixel-ratio: 3) {
+  .centerTheRouter {
+    left: calc(111% / 2);
+  }
+}
