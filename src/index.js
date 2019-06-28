@@ -1,11 +1,11 @@
 import React from "react";
-import { hydrate, render } from "react-dom";
 import "./css/index.css";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter } from "react-router-dom";
 import Router from "./Components/Router";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
+import { hydrate, render } from "react-dom";
 
 import {
   faAngleDoubleUp,
@@ -24,6 +24,7 @@ function Index() {
 }
 
 const rootElement = document.getElementById("root");
+
 if (rootElement.hasChildNodes()) {
   hydrate(<Index />, rootElement);
 } else {

@@ -6,6 +6,7 @@ import SwitchButtons from "../Components/SwitchButtons";
 import Spinner from "../Components/Spinner";
 import Button from "../Components/Button";
 import "../css/Views/App.css";
+import { Helmet } from "react-helmet";
 
 function App() {
   const [heroesArr, setHeroesArr] = useState([]);
@@ -413,6 +414,15 @@ function App() {
 
   return (
     <>
+      <Helmet>
+        <title>
+          Marvel Cinemative Universe/Avengers Character and Film Ranker
+        </title>
+        <meta
+          name="description"
+          content="Rank all your favorite MCU/Avengers films and characters in order of most-liked to least-liked."
+        />
+      </Helmet>
       <div className="textCenter headerTop">
         <h1>Marvel Cinemative Universe/Avengers Character and Film Ranker</h1>
         <p>

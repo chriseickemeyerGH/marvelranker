@@ -1,12 +1,12 @@
-import { Route } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import App from "../Views/App";
 import Login from "../Views/Auth/Login";
 import SignUp from "../Views/Auth/SignUp";
+import NoMatchRoute from "../Views/404";
 import firebase from "../firebase";
 import "../css/router.css";
 import { RouterLink, RouterButton } from "./RouterLinks";
-//
 import SnackBar from "./SnackBar";
 import Modal from "./Modal";
 import TextBox from "./TextBox";
@@ -141,10 +141,12 @@ function Router() {
       </div>
       <section id="page-container">
         <div id="content-wrap">
-          <Route exact path={"/"} component={App} />
-          <Route exact path={"/login"} component={Login} />
-          <Route exact path={"/signup"} component={SignUp} />
-
+          <Switch>
+            <Route exact path={"/"} component={App} />
+            <Route path={"/login"} component={Login} />
+            <Route path={"/signup"} component={SignUp} />
+            <Route component={NoMatchRoute} />
+          </Switch>
           {modalComponent()}
           <SnackBar
             snackBarVisibility={signOutSnackBar}

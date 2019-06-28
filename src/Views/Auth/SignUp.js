@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import firebase from "../../firebase.js";
 import PassEmailForm from "../../Components/PassEmailForm";
 import { useBasicAuthHook } from "../../Hooks/authHook";
+import { Helmet } from "react-helmet";
 
 function SignUp() {
   const [email, setEmail] = useState("");
@@ -43,22 +44,31 @@ function SignUp() {
   };
 
   return (
-    <PassEmailForm
-      title="Sign Up"
-      homeRedirect={loggedIn}
-      errorState={errorState}
-      errorMessage={errorMessage}
-      email={email}
-      onEmailChange={onEmailChange}
-      passWord={passWord}
-      onPassWordChange={onPassWordChange}
-      passWordWarning={passWordWarning}
-      passWordWarningChildren="Password must at least 6 characters"
-      onSubmit={onSignUp}
-      disabled={passWord.length > 5 && email.length > 0 ? false : true}
-      submitButtonClassName="marginTop disabled"
-      onSubmitButtonChildren="Create Account and Sign In"
-    />
+    <>
+      <Helmet>
+        <title>Sign Up to create an account</title>
+        <meta
+          name="description"
+          content="Sign Up to create an account and start ranking the MCU"
+        />
+      </Helmet>
+      <PassEmailForm
+        title="Sign Up"
+        homeRedirect={loggedIn}
+        errorState={errorState}
+        errorMessage={errorMessage}
+        email={email}
+        onEmailChange={onEmailChange}
+        passWord={passWord}
+        onPassWordChange={onPassWordChange}
+        passWordWarning={passWordWarning}
+        passWordWarningChildren="Password must at least 6 characters"
+        onSubmit={onSignUp}
+        disabled={passWord.length > 5 && email.length > 0 ? false : true}
+        submitButtonClassName="marginTop disabled"
+        onSubmitButtonChildren="Create Account and Sign In"
+      />
+    </>
   );
 }
 
