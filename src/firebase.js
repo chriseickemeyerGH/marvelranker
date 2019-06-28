@@ -3,13 +3,13 @@ import "firebase/firestore";
 import "firebase/auth";
 
 const config = {
-  apiKey: "AIzaSyA8c-T_d3TPZKkEzX5eR8Jkx0NFF2NR1MA",
-  authDomain: "votertest-52c39.firebaseapp.com",
-  databaseURL: "https://votertest-52c39.firebaseio.com",
-  projectId: "votertest-52c39",
-  storageBucket: "votertest-52c39.appspot.com",
-  messagingSenderId: "325101307784",
-  appId: "1:325101307784:web:a2dc7f6e78351466"
+  apiKey: process.env.REACT_APP_KEY,
+  authDomain: process.env.REACT_APP_DOMAIN,
+  databaseURL: process.env.REACT_APP_DB,
+  projectId: process.env.REACT_APP_PROJ_ID,
+  storageBucket: process.env.REACT_APP_STORAGE,
+  messagingSenderId: process.env.REACT_APP_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID
 };
 
 firebase.initializeApp(config);
