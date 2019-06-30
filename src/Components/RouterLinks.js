@@ -19,10 +19,8 @@ const RouterLink = ({ label, to, exact, onClick }) => {
   );
 };
 
-const RouterButton = ({ onClick, children }) => (
-  <button className="linkStyle routerButton" onClick={onClick}>
-    {children}
-  </button>
+const RouterButton = ({ ...props }) => (
+  <button {...props} className="linkStyle routerButton" />
 );
 
 export { RouterLink, RouterButton };

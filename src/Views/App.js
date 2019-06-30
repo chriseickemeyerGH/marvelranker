@@ -377,7 +377,7 @@ function App() {
       </div>
     </>
   );
-  //tester
+
   const filmRankerMain = () => (
     <>
       {loading && <Spinner />}

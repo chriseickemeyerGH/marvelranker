@@ -11,6 +11,7 @@ import SnackBar from "./SnackBar";
 import Modal from "./Modal";
 import TextBox from "./TextBox";
 import Footer from "./Footer";
+import Button from "./Button";
 
 function Router() {
   const [loggedIn, isLoggedIn] = useState("");
@@ -49,7 +50,8 @@ function Router() {
       });
   };
 
-  const onDeleteAccount = () => {
+  const onDeleteAccount = e => {
+    e.preventDefault();
     const credential = firebase.auth.EmailAuthProvider.credential(
       USER.email,
       verifiedPassword
@@ -89,31 +91,41 @@ function Router() {
 
   const modalComponent = () => (
     <>
-      <Modal
-        title="Verify Password"
-        onSubmit={onDeleteAccount}
-        onClose={closeModal}
-        submitTitle="Delete my account"
-        showModal={showModal}
-      >
+      <Modal title="Verify Password" showModal={showModal}>
         <p>You must verify your password to delete your account. </p>
 
         {modalError && <p className="error">{modalErrorText}</p>}
-        <label htmlFor="email">Email:</label>
+        <form>
+          <label htmlFor="email">Email:</label>
+          <br />
 
-        <TextBox
-          readOnly={true}
-          type="email"
-          name="email"
-          value={USER ? USER.email : ""}
-        />
-        <label htmlFor="password">Password:</label>
-        <TextBox
-          type="password"
-          name="password"
-          value={verifiedPassword}
-          onChange={e => setVerifiedPassword(e.target.value)}
-        />
+          <TextBox
+            readOnly={true}
+            type="email"
+            name="email"
+            value={USER ? USER.email : ""}
+          />
+          <label htmlFor="password">Password:</label>
+          <br />
+          <TextBox
+            type="password"
+            name="password"
+            value={verifiedPassword}
+            onChange={e => setVerifiedPassword(e.target.value)}
+          />
+          <span>
+            <Button
+              type="submit"
+              className="buttonSpacer"
+              onClick={onDeleteAccount}
+            >
+              Delete my account
+            </Button>
+            <Button className="buttonSpacer" onClick={closeModal}>
+              Close
+            </Button>
+          </span>
+        </form>
       </Modal>
     </>
   );
