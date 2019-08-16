@@ -45,6 +45,14 @@
     0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12);
   background-color: white;
 }
+.buttonContainer {
+  margin-top: 10px;
+  margin-bottom: 30px;
+
+  flex-flow: row nowrap;
+  justify-content: center;
+  display: none;
+}
 
 @media only screen and (max-width: 1300px) {
   .flexMain {
@@ -52,9 +60,13 @@
     flex-flow: column;
     align-items: center;
     width: 100%;
+    margin: 30px auto 0px auto;
   }
   .flexMainChild {
     width: 500px;
+  }
+  .buttonContainer {
+    display: flex;
   }
 }
 
@@ -100,9 +112,4 @@
 .headerTop > p {
   max-width: 700px;
   margin: auto;
-}
-.buttonContainer {
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
 }

@@ -656,7 +656,7 @@ function App() {
         ))}
       </div>
 
-      {window.innerWidth <= 1300 && (
+     
         <div className="buttonContainer">
           <Button onClick={charState ? charPageForward : charNamePageForward}>
             Next{" "}
@@ -667,7 +667,7 @@ function App() {
             />
           </Button>
         </div>
-      )}
+      
     </>
   );
 
@@ -716,7 +716,7 @@ function App() {
           </div>
         ))}
       </div>
-      {window.innerWidth <= 1300 && (
+     
         <div className="buttonContainer">
           <Button onClick={filmState ? filmPageForward : filmNameStateForward}>
             Next{" "}
@@ -727,7 +727,7 @@ function App() {
             />
           </Button>
         </div>
-      )}
+    
     </>
   );
 
