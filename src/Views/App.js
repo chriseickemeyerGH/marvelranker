@@ -52,7 +52,6 @@ function App() {
             setLastDOC(coll.docs[coll.docs.length - 1]);
             const newHeroes = [];
             coll.forEach(doc => {
-              console.log(doc.data());
               const { name, votes, upvoters, downvoters } = doc.data();
               newHeroes.push({
                 key: doc.id,
@@ -80,7 +79,6 @@ function App() {
             setLastDOC(coll.docs[coll.docs.length - 1]);
             const newHeroes = [];
             coll.forEach(doc => {
-              console.log(doc.data());
               const { name, votes, upvoters, downvoters } = doc.data();
               newHeroes.push({
                 key: doc.id,
@@ -674,8 +672,17 @@ function App() {
   );
 
   const filmToggle = () => {
-    setFilmState(!filmState);
-    setFilmNameState(!filmNameState);
+    if (!filmState && !filmNameState) {
+      setFilmState(true);
+    }
+    if (filmState) {
+      setFilmState(false);
+      setFilmNameState(true);
+    }
+    if (filmNameState) {
+      setFilmNameState(false);
+      setFilmState(true);
+    }
   };
 
   const filmRankerMain = () => (
@@ -726,7 +733,11 @@ function App() {
 
   const stateSwitch = () => {
     setSwitchState(false);
-    setFilmState(true);
+    if (filmNameState) {
+      return;
+    } else {
+      setFilmState(true);
+    }
   };
 
   return (
