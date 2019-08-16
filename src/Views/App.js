@@ -23,6 +23,8 @@ function App() {
   const [filmState, setFilmState] = useState(false);
   const [filmNameState, setFilmNameState] = useState(false);
   const [lastDOC, setLastDOC] = useState("");
+  const [firstCharQuery, setFirstCharQuery] = useState(true);
+  const [firstFilmQuery, setFirstFilmQuery] = useState(true);
 
   useEffect(() => {
     const listener = firebase.auth().onAuthStateChanged(user => {
@@ -39,68 +41,75 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const query = db.collection("characterOptions").orderBy("votes", "desc");
-    isLoading(true);
-    if (window.innerWidth <= 1300) {
-      const unsub = query.limit(10).onSnapshot(
-        coll => {
-          setLastDOC(coll.docs[coll.docs.length - 1]);
-          const newHeroes = [];
-          coll.forEach(doc => {
-            const { name, votes, upvoters, downvoters } = doc.data();
-            newHeroes.push({
-              key: doc.id,
-              doc,
-              name,
-              votes,
-              upvoters,
-              downvoters
+    if (charState) {
+      const query = db.collection("characterOptions").orderBy("votes", "desc");
+      if (firstCharQuery) {
+        isLoading(true);
+      }
+      if (window.innerWidth <= 1300) {
+        const unsub = query.limit(10).onSnapshot(
+          coll => {
+            setLastDOC(coll.docs[coll.docs.length - 1]);
+            const newHeroes = [];
+            coll.forEach(doc => {
+              console.log(doc.data());
+              const { name, votes, upvoters, downvoters } = doc.data();
+              newHeroes.push({
+                key: doc.id,
+                doc,
+                name,
+                votes,
+                upvoters,
+                downvoters
+              });
             });
-          });
-          setHeroesArr(newHeroes);
-          isLoading(false);
-        },
-        error => {
-          console.log(error);
-        }
-      );
-      return () => {
-        unsub();
-      };
-    } else {
-      const unsubscribe = query.onSnapshot(
-        coll => {
-          setLastDOC(coll.docs[coll.docs.length - 1]);
-          const newHeroes = [];
-          coll.forEach(doc => {
-            const { name, votes, upvoters, downvoters } = doc.data();
-            newHeroes.push({
-              key: doc.id,
-              doc,
-              name,
-              votes,
-              upvoters,
-              downvoters
+            setHeroesArr(newHeroes);
+            isLoading(false);
+            setFirstCharQuery(false);
+          },
+          error => {
+            console.log(error);
+          }
+        );
+        return () => {
+          unsub();
+        };
+      } else {
+        const unsubscribe = query.onSnapshot(
+          coll => {
+            setLastDOC(coll.docs[coll.docs.length - 1]);
+            const newHeroes = [];
+            coll.forEach(doc => {
+              console.log(doc.data());
+              const { name, votes, upvoters, downvoters } = doc.data();
+              newHeroes.push({
+                key: doc.id,
+                doc,
+                name,
+                votes,
+                upvoters,
+                downvoters
+              });
             });
-          });
-          setHeroesArr(newHeroes);
-          isLoading(false);
-        },
-        error => {
-          console.log(error);
-        }
-      );
-      return () => {
-        unsubscribe();
-      };
+            setHeroesArr(newHeroes);
+            isLoading(false);
+            setFirstCharQuery(false);
+          },
+          error => {
+            console.log(error);
+          }
+        );
+        return () => {
+          unsubscribe();
+        };
+      }
     }
-  }, [db, heroesArr]);
+  }, [db, charState, firstCharQuery]);
 
-  /*
   useEffect(() => {
     if (charNameState) {
       const query = db.collection("characterOptions").orderBy("name", "asc");
-      isLoading(true);
+      // isLoading(true);
       if (window.innerWidth <= 1300) {
         const unsub = query.limit(10).onSnapshot(
           coll => {
@@ -118,7 +127,7 @@ function App() {
               });
             });
             setHeroesArr(newHeroes);
-            isLoading(false);
+            //  isLoading(false);
           },
           error => {
             console.log(error);
@@ -155,12 +164,15 @@ function App() {
         };
       }
     }
-  }, [charNameState, db, heroesArr]);
+  }, [charNameState, db]);
 
   useEffect(() => {
     if (filmState) {
       const query = db.collection("filmOptions").orderBy("votes", "desc");
-      isLoading(true);
+      if (firstFilmQuery) {
+        isLoading(true);
+      }
+
       if (window.innerWidth <= 1300) {
         const unsub = query.limit(10).onSnapshot(
           coll => {
@@ -179,6 +191,7 @@ function App() {
             });
             setFilmArr(newHeroes);
             isLoading(false);
+            setFirstFilmQuery(false);
           },
           error => {
             console.log(error);
@@ -205,6 +218,7 @@ function App() {
             });
             setFilmArr(newHeroes);
             isLoading(false);
+            setFirstFilmQuery(false);
           },
           error => {
             console.log(error);
@@ -215,12 +229,12 @@ function App() {
         };
       }
     }
-  }, [filmState, db, filmArr]);
+  }, [filmState, firstFilmQuery, db]);
 
   useEffect(() => {
     if (filmNameState) {
       const query = db.collection("filmOptions").orderBy("name", "asc");
-      isLoading(true);
+      //  isLoading(true);
       if (window.innerWidth <= 1300) {
         const unsub = query.limit(10).onSnapshot(
           coll => {
@@ -238,7 +252,7 @@ function App() {
               });
             });
             setFilmArr(newHeroes);
-            isLoading(false);
+            //    isLoading(false);
           },
           error => {
             console.log(error);
@@ -264,7 +278,7 @@ function App() {
               });
             });
             setFilmArr(newHeroes);
-            isLoading(false);
+            //   isLoading(false);
           },
           error => {
             console.log(error);
@@ -275,20 +289,19 @@ function App() {
         };
       }
     }
-  }, [filmNameState, db, filmArr]);
-  */
+  }, [filmNameState, db]);
 
   function charPageForward() {
     const query = db
       .collection("characterOptions")
-      .orderBy("count", "desc")
+      .orderBy("votes", "desc")
       .limit(10);
     query.startAfter(lastDOC).onSnapshot(function(querySnapshot) {
       setLastDOC(querySnapshot.docs[querySnapshot.docs.length - 1]);
       const newArr = [];
       querySnapshot.forEach(function(doc) {
-        const { name, count } = doc.data();
-        newArr.push({ key: doc.id, name, count });
+        const { name, votes, upvoters, downvoters } = doc.data();
+        newArr.push({ key: doc.id, doc, name, votes, upvoters, downvoters });
       });
       setHeroesArr(newArr);
       if (!newArr.length) {
@@ -297,11 +310,14 @@ function App() {
             setLastDOC(coll.docs[coll.docs.length - 1]);
             const newArr = [];
             coll.forEach(doc => {
-              const { name, count } = doc.data();
+              const { name, votes, upvoters, downvoters } = doc.data();
               newArr.push({
                 key: doc.id,
+                doc,
                 name,
-                count
+                votes,
+                upvoters,
+                downvoters
               });
             });
             setHeroesArr(newArr);
@@ -322,8 +338,8 @@ function App() {
       setLastDOC(querySnapshot.docs[querySnapshot.docs.length - 1]);
       const newArr = [];
       querySnapshot.forEach(function(doc) {
-        const { name, count } = doc.data();
-        newArr.push({ key: doc.id, name, count });
+        const { name, votes, upvoters, downvoters } = doc.data();
+        newArr.push({ key: doc.id, doc, name, votes, upvoters, downvoters });
       });
       setHeroesArr(newArr);
       if (!newArr.length) {
@@ -332,11 +348,14 @@ function App() {
             setLastDOC(coll.docs[coll.docs.length - 1]);
             const newArr = [];
             coll.forEach(doc => {
-              const { name, count } = doc.data();
+              const { name, votes, upvoters, downvoters } = doc.data();
               newArr.push({
                 key: doc.id,
+                doc,
                 name,
-                count
+                votes,
+                upvoters,
+                downvoters
               });
             });
             setHeroesArr(newArr);
@@ -352,14 +371,14 @@ function App() {
   function filmPageForward() {
     const query = db
       .collection("filmOptions")
-      .orderBy("count", "desc")
+      .orderBy("votes", "desc")
       .limit(10);
     query.startAfter(lastDOC).onSnapshot(function(querySnapshot) {
       setLastDOC(querySnapshot.docs[querySnapshot.docs.length - 1]);
       const newArr = [];
       querySnapshot.forEach(function(doc) {
-        const { name, count } = doc.data();
-        newArr.push({ key: doc.id, name, count });
+        const { name, votes, upvoters, downvoters } = doc.data();
+        newArr.push({ key: doc.id, doc, name, votes, upvoters, downvoters });
       });
       setFilmArr(newArr);
       if (!newArr.length) {
@@ -368,11 +387,14 @@ function App() {
             setLastDOC(coll.docs[coll.docs.length - 1]);
             const newArr = [];
             coll.forEach(doc => {
-              const { name, count } = doc.data();
+              const { name, votes, upvoters, downvoters } = doc.data();
               newArr.push({
                 key: doc.id,
+                doc,
                 name,
-                count
+                votes,
+                upvoters,
+                downvoters
               });
             });
             setFilmArr(newArr);
@@ -394,8 +416,8 @@ function App() {
       setLastDOC(querySnapshot.docs[querySnapshot.docs.length - 1]);
       const newArr = [];
       querySnapshot.forEach(function(doc) {
-        const { name, count } = doc.data();
-        newArr.push({ key: doc.id, name, count });
+        const { name, votes, upvoters, downvoters } = doc.data();
+        newArr.push({ key: doc.id, doc, name, votes, upvoters, downvoters });
       });
       setFilmArr(newArr);
       if (!newArr.length) {
@@ -404,11 +426,14 @@ function App() {
             setLastDOC(coll.docs[coll.docs.length - 1]);
             const newArr = [];
             coll.forEach(doc => {
-              const { name, count } = doc.data();
+              const { name, votes, upvoters, downvoters } = doc.data();
               newArr.push({
                 key: doc.id,
+                doc,
                 name,
-                count
+                votes,
+                upvoters,
+                downvoters
               });
             });
             setFilmArr(newArr);
@@ -604,13 +629,12 @@ function App() {
 
   const rankerMain = () => (
     <>
-      {loading && <Spinner />}
-
       <div className="centerButton">
         <Button onClick={charToggle}>
           {charState ? "Sort by Name" : "Sort by Score"}
         </Button>
       </div>
+      {loading && <Spinner />}
       <div className="flexMain">
         {heroesArr.map((item, i) => (
           <div className="flexMainChild" key={item.key}>
@@ -628,7 +652,7 @@ function App() {
               signedOutVote={signOutVote}
             />
             <b className="inline titleSize">
-              <p>{charState ? `${i + 1}. ${item.name}` : item.name}</p>
+              <p>{item.name}</p>
             </b>
           </div>
         ))}
@@ -656,12 +680,12 @@ function App() {
 
   const filmRankerMain = () => (
     <>
-      {loading && <Spinner />}
       <div className="centerButton">
         <Button onClick={filmToggle}>
           {filmState ? "Sort by Name" : "Sort by Score"}
         </Button>{" "}
       </div>
+      {loading && <Spinner />}
       <div className="flexMain">
         {filmArr.map((item, i) => (
           <div className="flexMainChild" key={item.key}>
@@ -680,7 +704,7 @@ function App() {
             />
 
             <b className="inline titleSize">
-              <p>{filmState ? `${i + 1}. ${item.name}` : item.name}</p>
+              <p>{item.name}</p>
             </b>
           </div>
         ))}
