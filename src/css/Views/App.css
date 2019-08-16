@@ -101,3 +101,8 @@
   max-width: 700px;
   margin: auto;
 }
+.buttonContainer {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+}

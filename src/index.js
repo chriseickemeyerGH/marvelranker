@@ -10,10 +10,11 @@ import { hydrate, render } from "react-dom";
 import {
   faAngleDoubleUp,
   faAngleDoubleDown,
-  faHeart
+  faHeart,
+  faArrowRight
 } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faAngleDoubleUp, faAngleDoubleDown, faHeart, fab);
+library.add(faAngleDoubleUp, faAngleDoubleDown, faHeart, faArrowRight, fab);
 
 function Index() {
   return (
