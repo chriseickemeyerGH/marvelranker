@@ -1,6 +1,6 @@
 .snackBarClass {
-  width: 300px;
-  margin-left: -150px;
+  width: 275px;
+  margin-left: -137.5px;
   background-color: rgb(255, 251, 251);
   color: rgb(58, 58, 58);
   text-align: center;
@@ -11,18 +11,19 @@
   left: 50%;
   bottom: 40px;
   font-size: 20px;
-  border: 1px solid black;
+  border: 2px solid black;
   font-weight: 700;
 }
 .snackBarP {
   display: inline-block;
   position: relative;
+  width: 225px;
   left: 12.5px;
 }
 .closeSVG {
   position: relative;
-  top: -26px;
-  left: 40px;
+  top: -25.5px;
+  left: 21.5px;
   width: 25px;
   height: 25px;
   cursor: pointer;

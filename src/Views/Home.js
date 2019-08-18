@@ -7,7 +7,7 @@ import Spinner from "../Components/Spinner";
 import Button from "../Components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Helmet } from "react-helmet";
-import "../css/Views/App.css";
+import "../css/Views/Home.css";
 
 function Home() {
   const [db] = useState(firebase.firestore());
@@ -777,12 +777,12 @@ function Home() {
 
         {switchState && rankerMain()}
         {!switchState && filmRankerMain()}
-        <SnackBar
-          snackBarVisibility={signInSnackBar}
-          snackBarClose={closeSnackbar}
-          text="You must login to vote"
-        />
       </div>
+      <SnackBar
+        snackBarVisibility={signInSnackBar}
+        snackBarClose={closeSnackbar}
+        text="You must login to vote"
+      />
     </>
   );
 }

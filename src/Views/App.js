@@ -1,4 +1,4 @@
-import React from "react";
+/*import React from "react";
 import loadable from "@loadable/component";
 import { PrerenderedComponent } from "react-prerendered-component";
 
@@ -16,3 +16,4 @@ const Home = prerenderedLoadable(() => import("./Home"));
 const App = () => <Home />;
 
 export default App;
+*/

@@ -1,6 +1,6 @@
 import { Route, Switch } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import App from "./App";
+import Home from "./Home";
 import Login from "./Auth/Login";
 import SignUp from "./Auth/SignUp";
 import NoMatchRoute from "./404";
@@ -169,25 +169,25 @@ function Router() {
       <section id="page-container">
         <div id="content-wrap">
           <Switch>
-            <Route exact path={"/"} component={App} />
+            <Route exact path={"/"} component={Home} />
             <Route path={"/login"} component={Login} />
             <Route path={"/signup"} component={SignUp} />
             <Route component={NoMatchRoute} />
           </Switch>
           {modalComponent()}
-          <SnackBar
-            snackBarVisibility={signOutSnackBar}
-            snackBarClose={() => showSignOutSnackBar(false)}
-            text="Sign out successful"
-          />
-          <SnackBar
-            snackBarVisibility={deletionSnackBar}
-            snackBarClose={() => showDeletionSnackBar(false)}
-            text="Account deleted!"
-          />
         </div>
         <Footer />
       </section>
+      <SnackBar
+        snackBarVisibility={signOutSnackBar}
+        snackBarClose={() => showSignOutSnackBar(false)}
+        text="Sign out successful"
+      />
+      <SnackBar
+        snackBarVisibility={deletionSnackBar}
+        snackBarClose={() => showDeletionSnackBar(false)}
+        text="Account deleted!"
+      />
     </>
   );
 }
