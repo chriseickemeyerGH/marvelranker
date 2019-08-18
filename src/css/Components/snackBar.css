@@ -1,40 +1,29 @@
 .snackBarClass {
-  visibility: visible;
-  animation: fadein 0.4s, fadeout 0.4s 2s;
-  width: 225px;
-  margin-left: -125px;
+  width: 300px;
+  margin-left: -150px;
   background-color: rgb(255, 251, 251);
   color: rgb(58, 58, 58);
   text-align: center;
-  border-radius: 10px;
+  border-radius: 10px 0 10px 10px;
   padding: 5px;
   position: fixed;
   z-index: 15;
   left: 50%;
-  bottom: 30px;
+  bottom: 40px;
   font-size: 20px;
   border: 1px solid black;
   font-weight: 700;
 }
-
-@keyframes fadein {
-  from {
-    bottom: 0;
-    opacity: 0;
-  }
-  to {
-    bottom: 30px;
-    opacity: 1;
-  }
+.snackBarP {
+  display: inline-block;
+  position: relative;
+  left: 12.5px;
 }
-
-@keyframes fadeout {
-  from {
-    bottom: 30px;
-    opacity: 1;
-  }
-  to {
-    bottom: 0;
-    opacity: 0;
-  }
+.closeSVG {
+  position: relative;
+  top: -26px;
+  left: 40px;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
 }

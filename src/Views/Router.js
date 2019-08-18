@@ -1,17 +1,17 @@
 import { Route, Switch } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import App from "../Views/App";
-import Login from "../Views/Auth/Login";
-import SignUp from "../Views/Auth/SignUp";
-import NoMatchRoute from "../Views/404";
+import App from "./App";
+import Login from "./Auth/Login";
+import SignUp from "./Auth/SignUp";
+import NoMatchRoute from "./404";
 import firebase from "../firebase";
 import "../css/router.css";
-import { RouterLink, RouterButton } from "./RouterLinks";
-import SnackBar from "./SnackBar";
-import Modal from "./Modal";
-import TextBox from "./TextBox";
-import Footer from "./Footer";
-import Button from "./Button";
+import { RouterLink, RouterButton } from "../Components/RouterLinks";
+import SnackBar from "../Components/SnackBar";
+import Modal from "../Components/Modal";
+import TextBox from "../Components/TextBox";
+import Footer from "../Components/Footer";
+import Button from "../Components/Button";
 
 function Router() {
   const [loggedIn, isLoggedIn] = useState("");
@@ -34,6 +34,28 @@ function Router() {
     });
   }, []);
 
+  useEffect(() => {
+    if (signOutSnackBar) {
+      const timeout = setTimeout(() => {
+        showSignOutSnackBar(false);
+      }, 5000);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [signOutSnackBar]);
+
+  useEffect(() => {
+    if (deletionSnackBar) {
+      const timeout = setTimeout(() => {
+        showDeletionSnackBar(false);
+      }, 5000);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [deletionSnackBar]);
+
   const onSignOut = () => {
     firebase
       .auth()
@@ -41,9 +63,6 @@ function Router() {
       .then(() => {
         isLoggedIn(false);
         showSignOutSnackBar(true);
-        setTimeout(() => {
-          showSignOutSnackBar(false);
-        }, 2400);
       })
       .catch(error => {
         window.confirm(error.message);
@@ -61,12 +80,8 @@ function Router() {
         USER.delete()
           .then(() => {
             setShowModal(false);
-            setTimeout(() => {
-              showDeletionSnackBar(true);
-            }, 1);
-            setTimeout(() => {
-              showDeletionSnackBar(false);
-            }, 2400);
+            const truthy = true;
+            showDeletionSnackBar(truthy);
           })
           .catch(error => {
             if (error.code) {
@@ -162,10 +177,12 @@ function Router() {
           {modalComponent()}
           <SnackBar
             snackBarVisibility={signOutSnackBar}
+            snackBarClose={() => showSignOutSnackBar(false)}
             text="Sign out successful"
           />
           <SnackBar
             snackBarVisibility={deletionSnackBar}
+            snackBarClose={() => showDeletionSnackBar(false)}
             text="Account deleted!"
           />
         </div>

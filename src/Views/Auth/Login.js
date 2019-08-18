@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import firebase from "../../firebase.js";
-import PassEmailForm from "../../Components/PassEmailForm";
+
+import "../../css/Components/login.css";
+import GoogleButton from "../../Components/GoogleButton";
+import Button from "../../Components/Button";
+import TextBox from "../../Components/TextBox";
+import { Redirect } from "react-router-dom";
+
 import { useBasicAuthHook } from "../../Hooks/authHook";
 import { Helmet } from "react-helmet";
 
@@ -33,22 +39,41 @@ function Login() {
         <title>Login to the application</title>
         <meta name="description" content="Login to start ranking the MCU" />
       </Helmet>
-      <PassEmailForm
-        title="Login"
-        homeRedirect={loggedIn}
-        errorState={errorState}
-        errorMessage={errorMessage}
-        email={email}
-        onEmailChange={e => setEmail(e.target.value)}
-        passWord={passWord}
-        onPassWordChange={e => setPassWord(e.target.value)}
-        // passWordWarning
-        // passWordWarningChildren
-        onSubmit={onLogin}
-        //  disabled
-        submitButtonClassName="marginTop"
-        onSubmitButtonChildren="Sign In"
-      />
+
+      <div className="flexParent bodyTopMargin">
+        {loggedIn && <Redirect to="/" />}
+        <h1>Login</h1>
+        <>{errorState && <p className="error">{errorMessage}</p>}</>
+        <form>
+          <label htmlFor="email">Email:</label>
+          <br />
+          <TextBox
+            type="email"
+            name="email"
+            value={email}
+            required
+            onChange={e => setEmail(e.target.value)}
+          />
+          <br />
+          <label htmlFor="password">Password:</label>
+          <br />
+          <TextBox
+            type="password"
+            name="password"
+            value={passWord}
+            onChange={e => setPassWord(e.target.value)}
+            required
+          />
+          <br />
+
+          <Button type="submit" onClick={onLogin} className="marginTop">
+            Sign In
+          </Button>
+        </form>
+        <h2>Or</h2>
+        <GoogleButton />
+        <p>After completing Google sign-in, you will be redirected shortly</p>
+      </div>
     </>
   );
 }

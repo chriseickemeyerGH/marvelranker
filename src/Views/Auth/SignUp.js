@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import firebase from "../../firebase.js";
-import PassEmailForm from "../../Components/PassEmailForm";
+import "../../css/Components/signUp.css";
+import TextBox from "../../Components/TextBox";
+import GoogleButton from "../../Components/GoogleButton";
+import Button from "../../Components/Button";
+import { Redirect } from "react-router-dom";
+
 import { useBasicAuthHook } from "../../Hooks/authHook";
 import { Helmet } from "react-helmet";
 
@@ -52,22 +57,47 @@ function SignUp() {
           content="Sign Up to create an account and start ranking the MCU"
         />
       </Helmet>
-      <PassEmailForm
-        title="Sign Up"
-        homeRedirect={loggedIn}
-        errorState={errorState}
-        errorMessage={errorMessage}
-        email={email}
-        onEmailChange={onEmailChange}
-        passWord={passWord}
-        onPassWordChange={onPassWordChange}
-        passWordWarning={passWordWarning}
-        passWordWarningChildren="Password must at least 6 characters"
-        onSubmit={onSignUp}
-        disabled={passWord.length > 5 && email.length > 0 ? false : true}
-        submitButtonClassName="marginTop disabled"
-        onSubmitButtonChildren="Create Account and Sign In"
-      />
+
+      <div className="flexParent bodyTopMargin">
+        {loggedIn && <Redirect to="/" />}
+        <h1>Sign Up</h1>
+        <>{errorState && <p className="error">{errorMessage}</p>}</>
+        <form>
+          <label htmlFor="email">Email:</label>
+          <br />
+          <TextBox
+            type="email"
+            name="email"
+            value={email}
+            required
+            onChange={onEmailChange}
+          />
+          <br />
+          <label htmlFor="password">Password:</label>
+          <br />
+          <TextBox
+            type="password"
+            name="password"
+            value={passWord}
+            onChange={onPassWordChange}
+            required
+          />
+          <br />
+          {passWordWarning && <p>Password must at least 6 characters</p>}
+
+          <Button
+            type="submit"
+            disabled={passWord.length > 5 && email.length > 0 ? false : true}
+            onClick={onSignUp}
+            className="marginTop disabled"
+          >
+            Create Account and Sign In
+          </Button>
+        </form>
+        <h2>Or</h2>
+        <GoogleButton />
+        <p>After completing Google sign-in, you will be redirected shortly</p>
+      </div>
     </>
   );
 }
