@@ -1,0 +1,5 @@
+{
+  "eslint.packageManager": "yarn",
+  "eslint.nodePath": "C:\\tmp\\es-298\\node_modules",
+  "eslint.trace.server": "messages"
+}

@@ -46,6 +46,7 @@ function Home() {
       if (firstCharQuery) {
         isLoading(true);
       }
+      //pagination/list size contingent upon screen width
       if (window.innerWidth <= 1300) {
         const unsub = query.limit(10).onSnapshot(
           coll => {
@@ -667,7 +668,6 @@ function Home() {
           </div>
         ))}
       </div>
-
       <div className="buttonContainer">
         <Button onClick={charState ? charPageForward : charNamePageForward}>
           Next{" "}
@@ -685,6 +685,7 @@ function Home() {
     if (!filmState && !filmNameState) {
       setFilmState(true);
     }
+
     if (filmState) {
       setFilmState(false);
       setFilmNameState(true);
@@ -752,9 +753,7 @@ function Home() {
   return (
     <>
       <Helmet>
-        <title>
-          Marvel Cinemative Universe/Avengers Character and Film Ranker
-        </title>
+        <title>Rank the Marvel Cinemative Universe</title>
         <meta
           name="description"
           content="Rank all your favorite MCU/Avengers films and characters in order of most-liked to least-liked."
