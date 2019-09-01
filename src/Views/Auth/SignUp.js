@@ -39,10 +39,8 @@ function SignUp() {
       .auth()
       .createUserWithEmailAndPassword(email, passWord)
       .catch(error => {
-        if (error.code) {
-          showErrorState(true);
-          showErrorMessage(error.message);
-        }
+        showErrorState(true);
+        showErrorMessage(error.message);
         setPassWord("");
         setEmail("");
       });
