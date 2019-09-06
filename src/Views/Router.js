@@ -1,7 +1,8 @@
 import { Route, Switch } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import Home from "./Home";
+import { Home } from "./Home";
 import Login from "./Auth/Login";
+import { ProtectedRoute } from "../Components/ProtectedRoute";
 import SignUp from "./Auth/SignUp";
 import NoMatchRoute from "./404";
 import firebase from "../firebase";
@@ -13,8 +14,10 @@ import TextBox from "../Components/TextBox";
 import Footer from "../Components/Footer";
 import Button from "../Components/Button";
 
-function Router() {
-  const [loggedIn, isLoggedIn] = useState("");
+const UserContext = React.createContext(null);
+
+const Router = () => {
+  const [UID, setUID] = useState("");
   const [signOutSnackBar, showSignOutSnackBar] = useState(false);
   const [modalError, showModalError] = useState(false);
   const [modalErrorText, setModalErrorText] = useState("");
@@ -22,14 +25,12 @@ function Router() {
   const [verifiedPassword, setVerifiedPassword] = useState("");
   const [deletionSnackBar, showDeletionSnackBar] = useState(false);
 
-  const USER = firebase.auth().currentUser;
-
   useEffect(() => {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        isLoggedIn(true);
+        setUID(user.uid);
       } else {
-        isLoggedIn(false);
+        setUID("");
       }
     });
   }, []);
@@ -61,13 +62,14 @@ function Router() {
       .auth()
       .signOut()
       .then(() => {
-        isLoggedIn(false);
+        setUID("");
         showSignOutSnackBar(true);
       })
       .catch(error => {
-        window.confirm(error.message);
+        alert(error.message);
       });
   };
+  const USER = firebase.auth().currentUser;
 
   const onDeleteAccount = e => {
     e.preventDefault();
@@ -146,9 +148,9 @@ function Router() {
   );
 
   return (
-    <>
+    <UserContext.Provider value={UID}>
       <div className="centerTheRouter routerLinkCenter">
-        {!loggedIn && (
+        {!UID && (
           <>
             <RouterLink to={"/"} label="Home" exact={true} />
             <RouterLink to={"/login"} label="Login" />
@@ -157,7 +159,7 @@ function Router() {
         )}
       </div>
       <div className="centerTheRouter routerButtonsCenter">
-        {loggedIn && (
+        {UID && (
           <>
             <RouterButton onClick={onSignOut}>Sign Out</RouterButton>
             <RouterButton onClick={() => setShowModal(true)}>
@@ -169,9 +171,13 @@ function Router() {
       <section id="page-container">
         <div id="content-wrap">
           <Switch>
-            <Route exact path={"/"} component={Home} />
-            <Route path={"/login"} component={Login} />
-            <Route path={"/signup"} component={SignUp} />
+            <Route exact path="/" component={Home} />
+            <ProtectedRoute isLoggedIn={UID} path="/login" component={Login} />
+            <ProtectedRoute
+              isLoggedIn={UID}
+              path="/signup"
+              component={SignUp}
+            />
             <Route component={NoMatchRoute} />
           </Switch>
           {modalComponent()}
@@ -188,8 +194,8 @@ function Router() {
         snackBarClose={() => showDeletionSnackBar(false)}
         text="Account deleted!"
       />
-    </>
+    </UserContext.Provider>
   );
-}
+};
 
-export default Router;
+export { Router, UserContext };

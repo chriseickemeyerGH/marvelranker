@@ -1,20 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import firebase from "../firebase.js";
 import SnackBar from "../Components/SnackBar";
 import VotingButtons from "../Components/VotingButtons";
 import SwitchButtons from "../Components/SwitchButtons";
 import Spinner from "../Components/Spinner";
 import Button from "../Components/Button";
+import { UserContext } from "./Router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Helmet } from "react-helmet";
 import "../css/Views/Home.css";
 
-function Home() {
+export const Home = () => {
+  const userID = useContext(UserContext);
+  return <HomeSubComponent UID={userID} />;
+};
+
+const HomeSubComponent = ({ UID }) => {
   const [db] = useState(firebase.firestore());
   const [heroesArr, setHeroesArr] = useState([]);
   const [filmArr, setFilmArr] = useState([]);
-  const [loggedIn, isLoggedIn] = useState("");
-  const [UID, setUID] = useState("");
   const [switchState, setSwitchState] = useState(true);
   const [signInSnackBar, showSignInSnackBar] = useState(false);
   const [loading, isLoading] = useState("");
@@ -25,20 +29,6 @@ function Home() {
   const [lastDOC, setLastDOC] = useState("");
   const [firstCharQuery, setFirstCharQuery] = useState(true);
   const [firstFilmQuery, setFirstFilmQuery] = useState(true);
-
-  useEffect(() => {
-    const listener = firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        setUID(user.uid);
-        isLoggedIn(true);
-      } else {
-        isLoggedIn(false);
-      }
-    });
-    return () => {
-      listener();
-    };
-  }, []);
 
   useEffect(() => {
     if (charState) {
@@ -650,7 +640,7 @@ function Home() {
         {heroesArr.map((item, i) => (
           <div className="flexMainChild" key={item.key}>
             <VotingButtons
-              loggedIn={loggedIn}
+              loggedIn={UID}
               loggedInUpvote={() => onCharacterUpVote(i)}
               loggedInDownvote={() => onCharacterDownVote(i)}
               upvoteClass={
@@ -708,7 +698,7 @@ function Home() {
         {filmArr.map((item, i) => (
           <div className="flexMainChild" key={item.key}>
             <VotingButtons
-              loggedIn={loggedIn}
+              loggedIn={UID}
               loggedInUpvote={() => onFilmUpvote(i)}
               loggedInDownvote={() => onFilmDownvote(i)}
               upvoteClass={
@@ -784,6 +774,4 @@ function Home() {
       />
     </>
   );
-}
-
-export default Home;
+};

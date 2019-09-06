@@ -2,7 +2,7 @@ import React from "react";
 import "./css/index.css";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter } from "react-router-dom";
-import Router from "./Views/Router";
+import { Router } from "./Views/Router";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 //import ReactDOM from "react-dom";
@@ -33,23 +33,6 @@ if (rootElement.hasChildNodes()) {
 } else {
   render(<Index />, rootElement);
 }
-
-/*
-import loadable from "@loadable/component";
-import { PrerenderedComponent } from "react-prerendered-component";
-
-const prerenderedLoadable = dynamicImport => {
-  const LoadableComponent = loadable(dynamicImport);
-  return React.memo(props => (
-    // you can use the `.preload()` method from react-loadable or react-imported-component`
-    <PrerenderedComponent live={LoadableComponent.load()}>
-      <LoadableComponent {...props} />
-    </PrerenderedComponent>
-  ));
-};
-
-const MyComponent = prerenderedLoadable(() => import("./MyComponent"));
-*/
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

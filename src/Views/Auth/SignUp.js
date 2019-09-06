@@ -4,19 +4,13 @@ import "../../css/Components/signUp.css";
 import TextBox from "../../Components/TextBox";
 import GoogleButton from "../../Components/GoogleButton";
 import Button from "../../Components/Button";
-import { Redirect } from "react-router-dom";
-
-import { useBasicAuthHook } from "../../Hooks/authHook";
 import { Helmet } from "react-helmet";
 
 function SignUp() {
   const [email, setEmail] = useState("");
   const [passWord, setPassWord] = useState("");
   const [passWordWarning, setPassWordWarning] = useState(false);
-  const [errorState, showErrorState] = useState(false);
   const [errorMessage, showErrorMessage] = useState("");
-
-  const loggedIn = useBasicAuthHook();
 
   const onPassWordChange = e => {
     const newPassWord = e.target.value;
@@ -39,7 +33,6 @@ function SignUp() {
       .auth()
       .createUserWithEmailAndPassword(email, passWord)
       .catch(error => {
-        showErrorState(true);
         showErrorMessage(error.message);
         setPassWord("");
         setEmail("");
@@ -57,9 +50,8 @@ function SignUp() {
       </Helmet>
 
       <div className="flexParent bodyTopMargin">
-        {loggedIn && <Redirect to="/" />}
         <h1>Sign Up</h1>
-        <>{errorState && <p className="error">{errorMessage}</p>}</>
+        <>{errorMessage && <p className="error">{errorMessage}</p>}</>
         <form>
           <label htmlFor="email">Email:</label>
           <br />
@@ -81,7 +73,7 @@ function SignUp() {
             required
           />
           <br />
-          {passWordWarning && <p>Password must at least 6 characters</p>}
+          {passWordWarning && <p>Password must be at least 6 characters</p>}
 
           <Button
             type="submit"
