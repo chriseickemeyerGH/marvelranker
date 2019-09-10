@@ -9,10 +9,25 @@
   position: fixed;
   z-index: 15;
   left: 50%;
-  bottom: 40px;
+
   font-size: 20px;
   border: 2px solid black;
   font-weight: 700;
+  animation-name: slideIn;
+  animation-duration: 0.5s;
+  animation-timing-function: ease;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-delay: 0.1s;
+}
+
+@keyframes slideIn {
+  0% {
+    bottom: 0;
+  }
+  100% {
+    bottom: 40px;
+  }
 }
 .snackBarP {
   display: inline-block;
