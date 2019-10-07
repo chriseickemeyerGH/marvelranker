@@ -1,6 +1,6 @@
 import { Route, Switch } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import { Home } from "./Home";
+import Home from "./Home";
 import Login from "./Auth/Login";
 import { ProtectedRoute } from "../Components/ProtectedRoute";
 import SignUp from "./Auth/SignUp";
@@ -180,6 +180,7 @@ const Router = () => {
             />
             <Route component={NoMatchRoute} />
           </Switch>
+
           {modalComponent()}
         </div>
         <Footer />

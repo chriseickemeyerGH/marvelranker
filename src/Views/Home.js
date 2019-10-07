@@ -10,12 +10,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Helmet } from "react-helmet";
 import "../css/Views/Home.css";
 
-export const Home = () => {
-  const userID = useContext(UserContext);
-  return <HomeSubComponent UID={userID} />;
-};
-
-const HomeSubComponent = ({ UID }) => {
+const Home = () => {
+  const UID = useContext(UserContext);
   const [db] = useState(firebase.firestore());
   const [heroesArr, setHeroesArr] = useState([]);
   const [filmArr, setFilmArr] = useState([]);
@@ -33,6 +29,7 @@ const HomeSubComponent = ({ UID }) => {
   useEffect(() => {
     if (charState) {
       const query = db.collection("characterOptions").orderBy("votes", "desc");
+      //loading upon first query of each kind
       if (firstCharQuery) {
         isLoading(true);
       }
@@ -280,10 +277,10 @@ const HomeSubComponent = ({ UID }) => {
     }
   }, [filmNameState, db]);
 
-  function charPageForward() {
+  const namePageFn = (orderField, orderDirection) => {
     const query = db
       .collection("characterOptions")
-      .orderBy("votes", "desc")
+      .orderBy(orderField, orderDirection)
       .limit(10);
     query.startAfter(lastDOC).onSnapshot(function(querySnapshot) {
       setLastDOC(querySnapshot.docs[querySnapshot.docs.length - 1]);
@@ -317,50 +314,20 @@ const HomeSubComponent = ({ UID }) => {
         );
       }
     });
-  }
-  function charNamePageForward() {
-    const query = db
-      .collection("characterOptions")
-      .orderBy("name", "asc")
-      .limit(10);
-    query.startAfter(lastDOC).onSnapshot(function(querySnapshot) {
-      setLastDOC(querySnapshot.docs[querySnapshot.docs.length - 1]);
-      const newArr = [];
-      querySnapshot.forEach(function(doc) {
-        const { name, votes, upvoters, downvoters } = doc.data();
-        newArr.push({ key: doc.id, doc, name, votes, upvoters, downvoters });
-      });
-      setHeroesArr(newArr);
-      if (!newArr.length) {
-        query.onSnapshot(
-          coll => {
-            setLastDOC(coll.docs[coll.docs.length - 1]);
-            const newArr = [];
-            coll.forEach(doc => {
-              const { name, votes, upvoters, downvoters } = doc.data();
-              newArr.push({
-                key: doc.id,
-                doc,
-                name,
-                votes,
-                upvoters,
-                downvoters
-              });
-            });
-            setHeroesArr(newArr);
-          },
-          error => {
-            console.log(error);
-          }
-        );
-      }
-    });
-  }
+  };
 
-  function filmPageForward() {
+  const charPageForward = () => {
+    namePageFn("votes", "desc");
+  };
+
+  const charNamePageForward = () => {
+    namePageFn("name", "asc");
+  };
+
+  const filmPageFn = (orderField, orderDirection) => {
     const query = db
       .collection("filmOptions")
-      .orderBy("votes", "desc")
+      .orderBy(orderField, orderDirection)
       .limit(10);
     query.startAfter(lastDOC).onSnapshot(function(querySnapshot) {
       setLastDOC(querySnapshot.docs[querySnapshot.docs.length - 1]);
@@ -394,46 +361,14 @@ const HomeSubComponent = ({ UID }) => {
         );
       }
     });
-  }
+  };
+  const filmPageForward = () => {
+    filmPageFn("votes", "desc");
+  };
 
-  function filmNameStateForward() {
-    const query = db
-      .collection("filmOptions")
-      .orderBy("name", "asc")
-      .limit(10);
-    query.startAfter(lastDOC).onSnapshot(function(querySnapshot) {
-      setLastDOC(querySnapshot.docs[querySnapshot.docs.length - 1]);
-      const newArr = [];
-      querySnapshot.forEach(function(doc) {
-        const { name, votes, upvoters, downvoters } = doc.data();
-        newArr.push({ key: doc.id, doc, name, votes, upvoters, downvoters });
-      });
-      setFilmArr(newArr);
-      if (!newArr.length) {
-        query.onSnapshot(
-          coll => {
-            setLastDOC(coll.docs[coll.docs.length - 1]);
-            const newArr = [];
-            coll.forEach(doc => {
-              const { name, votes, upvoters, downvoters } = doc.data();
-              newArr.push({
-                key: doc.id,
-                doc,
-                name,
-                votes,
-                upvoters,
-                downvoters
-              });
-            });
-            setFilmArr(newArr);
-          },
-          error => {
-            console.log(error);
-          }
-        );
-      }
-    });
-  }
+  const filmNameStatePageForward = () => {
+    filmPageFn("name", "asc");
+  };
 
   const storeVal = firebase.firestore.FieldValue;
 
@@ -605,9 +540,6 @@ const HomeSubComponent = ({ UID }) => {
     );
   };
 
-  const signOutVote = () => {
-    showSignInSnackBar(true);
-  };
   const charToggle = () => {
     setCharState(!charState);
     setCharNameState(!charNameState);
@@ -623,10 +555,6 @@ const HomeSubComponent = ({ UID }) => {
       };
     }
   }, [signInSnackBar]);
-
-  const closeSnackbar = () => {
-    showSignInSnackBar(false);
-  };
 
   const rankerMain = () => (
     <>
@@ -650,7 +578,7 @@ const HomeSubComponent = ({ UID }) => {
                 item.downvoters.includes(UID) ? "icon iconActive" : "icon"
               }
               votes={item.votes}
-              signedOutVote={signOutVote}
+              signedOutVote={() => showSignInSnackBar(true)}
             />
             <b className="inline titleSize">
               <p>{item.name}</p>
@@ -708,7 +636,7 @@ const HomeSubComponent = ({ UID }) => {
                 item.downvoters.includes(UID) ? "icon iconActive" : "icon"
               }
               votes={item.votes}
-              signedOutVote={signOutVote}
+              signedOutVote={() => showSignInSnackBar(true)}
             />
 
             <b className="inline titleSize">
@@ -719,7 +647,9 @@ const HomeSubComponent = ({ UID }) => {
       </div>
 
       <div className="buttonContainer">
-        <Button onClick={filmState ? filmPageForward : filmNameStateForward}>
+        <Button
+          onClick={filmState ? filmPageForward : filmNameStatePageForward}
+        >
           Next{" "}
           <FontAwesomeIcon
             title="Next Results"
@@ -769,9 +699,10 @@ const HomeSubComponent = ({ UID }) => {
       </div>
       <SnackBar
         snackBarVisibility={signInSnackBar}
-        snackBarClose={closeSnackbar}
+        snackBarClose={() => showSignInSnackBar(false)}
         text="You must login to vote"
       />
     </>
   );
 };
+export default Home;
