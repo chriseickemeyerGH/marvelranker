@@ -128,7 +128,7 @@ const Home = () => {
     populateArrays
   ]);
 
-  // lastDoc (also 'query') was making useEFfect run on endless loop, thus the repetition here
+  // lastDoc (also 'query') was making useEffect run on endless loop, thus the repetition here
   //useCallback -> could not return snapshot listener in useEffect
   const onPageForward = () => {
     const query =
@@ -197,20 +197,23 @@ const Home = () => {
 
   const storeVal = firebase.firestore.FieldValue;
 
-  const onCharacterUpVote = i => {
-    UpvoteFn(i, heroesArr, "characterOptions", UID, storeVal, db);
+  const onUpvote = i => {
+    if (UID) {
+      switchState &&
+        UpvoteFn(i, heroesArr, "characterOptions", UID, storeVal, db);
+      !switchState && UpvoteFn(i, filmArr, "filmOptions", UID, storeVal, db);
+    } else {
+      showSignInSnackBar(true);
+    }
   };
-
-  const onCharacterDownVote = i => {
-    DownvoteFn(i, heroesArr, "characterOptions", UID, storeVal, db);
-  };
-
-  const onFilmUpvote = i => {
-    UpvoteFn(i, filmArr, "filmOptions", UID, storeVal, db);
-  };
-
-  const onFilmDownvote = i => {
-    DownvoteFn(i, filmArr, "filmOptions", UID, storeVal, db);
+  const onDownvote = i => {
+    if (UID) {
+      switchState &&
+        DownvoteFn(i, heroesArr, "characterOptions", UID, storeVal, db);
+      !switchState && DownvoteFn(i, filmArr, "filmOptions", UID, storeVal, db);
+    } else {
+      showSignInSnackBar(true);
+    }
   };
 
   const voteNameToggle = () => {
@@ -243,16 +246,17 @@ const Home = () => {
           <div className="flexMainChild" key={item.key}>
             <VotingButtons
               loggedIn={UID}
-              loggedInUpvote={() => onCharacterUpVote(i)}
-              loggedInDownvote={() => onCharacterDownVote(i)}
+              onUpvote={() => onUpvote(i)}
+              onDownvote={() => onDownvote(i)}
               upvoteClass={
-                item.upvoters.includes(UID) ? "icon iconActive" : "icon"
+                UID && item.upvoters.includes(UID) ? "icon iconActive" : "icon"
               }
               downvoteClass={
-                item.downvoters.includes(UID) ? "icon iconActive" : "icon"
+                UID && item.downvoters.includes(UID)
+                  ? "icon iconActive"
+                  : "icon"
               }
               votes={item.votes}
-              signedOutVote={() => showSignInSnackBar(true)}
             />
             <b className="inline titleSize">
               <p>{item.name}</p>
@@ -274,16 +278,17 @@ const Home = () => {
           <div className="flexMainChild" key={item.key}>
             <VotingButtons
               loggedIn={UID}
-              loggedInUpvote={() => onFilmUpvote(i)}
-              loggedInDownvote={() => onFilmDownvote(i)}
+              onUpvote={() => onUpvote(i)}
+              onDownvote={() => onDownvote(i)}
               upvoteClass={
-                item.upvoters.includes(UID) ? "icon iconActive" : "icon"
+                UID && item.upvoters.includes(UID) ? "icon iconActive" : "icon"
               }
               downvoteClass={
-                item.downvoters.includes(UID) ? "icon iconActive" : "icon"
+                UID && item.downvoters.includes(UID)
+                  ? "icon iconActive"
+                  : "icon"
               }
               votes={item.votes}
-              signedOutVote={() => showSignInSnackBar(true)}
             />
 
             <b className="inline titleSize">

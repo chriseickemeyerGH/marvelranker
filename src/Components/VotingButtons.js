@@ -1,47 +1,43 @@
 import React from "react";
 import ScreenReader from "./ScreenReader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { VotesNum } from "./VotesNum";
 import "../css/Components/votingButtons.css";
 
 const VotingButtons = ({
   loggedIn,
-  loggedInUpvote,
-  loggedInDownvote,
+  onUpvote,
+  onDownvote,
   upvoteClass,
   downvoteClass,
-  votes,
-  signedOutVote
+  votes
 }) => {
   return (
     <div className="votingPosition inline">
-      {loggedIn && (
-        <div className="buttonBunch">
-          <div className="inline icons">
-            <FontAwesomeIcon
-              onClick={loggedInUpvote}
-              title="Upvote"
-              icon="angle-double-up"
-              className={upvoteClass}
-            />
+      <div className="buttonBunch">
+        <div className="inline icons">
+          <FontAwesomeIcon
+            onClick={onUpvote}
+            title={loggedIn ? "Upvote" : "You must be logged in to vote"}
+            icon="angle-double-up"
+            className={upvoteClass}
+          />
 
-            <br />
-            <ScreenReader>Upvote</ScreenReader>
-            <FontAwesomeIcon
-              onClick={loggedInDownvote}
-              title="Downvote"
-              icon="angle-double-down"
-              className={downvoteClass}
-            />
+          <br />
+          <ScreenReader>Upvote</ScreenReader>
+          <FontAwesomeIcon
+            onClick={onDownvote}
+            title={loggedIn ? "Downvote" : "You must be logged in to vote"}
+            icon="angle-double-down"
+            className={downvoteClass}
+          />
 
-            <ScreenReader>Downvote</ScreenReader>
-          </div>
-          <span className="votePosition inline">
-            {votes > 999 ? `${(votes / 1000).toFixed(1)}k` : votes}
-          </span>
+          <ScreenReader>Downvote</ScreenReader>
         </div>
-      )}
+        <VotesNum votes={votes} />
+      </div>
 
-      {!loggedIn && (
+      {/*!loggedIn && (
         <div className="buttonBunch">
           <div className="inline icons">
             <FontAwesomeIcon
@@ -63,11 +59,9 @@ const VotingButtons = ({
             />
             <ScreenReader>You must be logged in to downvote</ScreenReader>
           </div>
-          <span className="votePosition inline">
-            {votes > 999 ? `${(votes / 1000).toFixed(1)}k` : votes}
-          </span>
+          <VotesNum votes={votes} />
         </div>
-      )}
+      ) */}
     </div>
   );
 };
