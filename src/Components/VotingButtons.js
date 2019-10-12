@@ -20,7 +20,6 @@ const VotingButtons = ({
             <FontAwesomeIcon
               onClick={loggedInUpvote}
               title="Upvote"
-              aria-hidden="true"
               icon="angle-double-up"
               className={upvoteClass}
             />
@@ -30,7 +29,6 @@ const VotingButtons = ({
             <FontAwesomeIcon
               onClick={loggedInDownvote}
               title="Downvote"
-              aria-hidden="true"
               icon="angle-double-down"
               className={downvoteClass}
             />
@@ -49,7 +47,6 @@ const VotingButtons = ({
             <FontAwesomeIcon
               onClick={signedOutVote}
               title="You must be logged in to upvote"
-              aria-hidden="true"
               icon="angle-double-up"
               size="2x"
               className="icon"
@@ -60,7 +57,6 @@ const VotingButtons = ({
             <FontAwesomeIcon
               onClick={signedOutVote}
               title="You must be logged in to downvote"
-              aria-hidden="true"
               icon="angle-double-down"
               size="2x"
               className="icon"

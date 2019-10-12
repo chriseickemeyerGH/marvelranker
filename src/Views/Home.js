@@ -1,12 +1,17 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import firebase from "../firebase.js";
 import SnackBar from "../Components/SnackBar";
 import VotingButtons from "../Components/VotingButtons";
 import SwitchButtons from "../Components/SwitchButtons";
 import Spinner from "../Components/Spinner";
-import Button from "../Components/Button";
+//import Button from "../Components/Button";
+import { UpvoteFn } from "../Components/UpvoteFn";
+import { DownvoteFn } from "../Components/DownvoteFn";
+import { PageForwardButton } from "../Components/PageForwardButton";
 import { UserContext } from "./Router";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { HomeDescription } from "../Components/HomeDescription";
+//import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { NameScoreToggleButton } from "../Components/NameScoreToggleButton";
 import { Helmet } from "react-helmet";
 import "../css/Views/Home.css";
 
@@ -17,532 +22,205 @@ const Home = () => {
   const [filmArr, setFilmArr] = useState([]);
   const [switchState, setSwitchState] = useState(true);
   const [signInSnackBar, showSignInSnackBar] = useState(false);
-  const [loading, isLoading] = useState("");
+  const [loading, isLoading] = useState(true);
   const [charState, setCharState] = useState(true);
   const [charNameState, setCharNameState] = useState(false);
-  const [filmState, setFilmState] = useState(false);
+  const [filmState, setFilmState] = useState(true);
   const [filmNameState, setFilmNameState] = useState(false);
   const [lastDOC, setLastDOC] = useState("");
-  const [firstCharQuery, setFirstCharQuery] = useState(true);
-  const [firstFilmQuery, setFirstFilmQuery] = useState(true);
+  const [firstQuery, setFirstQuery] = useState(true);
+  const [secondQuery, setSecondQuery] = useState(true);
+
+  const populateArrays = useCallback(
+    array => {
+      if (switchState) setHeroesArr(array);
+      if (!switchState) setFilmArr(array);
+    },
+    [switchState]
+  );
 
   useEffect(() => {
-    if (charState) {
-      const query = db.collection("characterOptions").orderBy("votes", "desc");
-      //loading upon first query of each kind
-      if (firstCharQuery) {
-        isLoading(true);
-      }
-      //pagination/list size contingent upon screen width
-      if (window.innerWidth <= 1300) {
-        const unsub = query.limit(10).onSnapshot(
-          coll => {
-            setLastDOC(coll.docs[coll.docs.length - 1]);
-            const newHeroes = [];
-            coll.forEach(doc => {
-              const { name, votes, upvoters, downvoters } = doc.data();
-              newHeroes.push({
-                key: doc.id,
-                doc,
-                name,
-                votes,
-                upvoters,
-                downvoters
-              });
-            });
-            setHeroesArr(newHeroes);
-            isLoading(false);
-            setFirstCharQuery(false);
-          },
-          error => {
-            console.log(error);
-          }
-        );
-        return () => {
-          unsub();
-        };
-      } else {
-        const unsubscribe = query.onSnapshot(
-          coll => {
-            setLastDOC(coll.docs[coll.docs.length - 1]);
-            const newHeroes = [];
-            coll.forEach(doc => {
-              const { name, votes, upvoters, downvoters } = doc.data();
-              newHeroes.push({
-                key: doc.id,
-                doc,
-                name,
-                votes,
-                upvoters,
-                downvoters
-              });
-            });
-            setHeroesArr(newHeroes);
-            isLoading(false);
-            setFirstCharQuery(false);
-          },
-          error => {
-            console.log(error);
-          }
-        );
-        return () => {
-          unsubscribe();
-        };
-      }
+    const query =
+      (charState &&
+        switchState &&
+        db.collection("characterOptions").orderBy("votes", "desc")) ||
+      (charNameState &&
+        switchState &&
+        db.collection("characterOptions").orderBy("name", "asc")) ||
+      (filmState &&
+        !switchState &&
+        db.collection("filmOptions").orderBy("votes", "desc")) ||
+      (filmNameState &&
+        !switchState &&
+        db.collection("filmOptions").orderBy("name", "asc"));
+    if (charState && switchState && firstQuery) {
+      isLoading(true);
+      setFirstQuery(false);
     }
-  }, [db, charState, firstCharQuery]);
-
-  useEffect(() => {
-    if (charNameState) {
-      const query = db.collection("characterOptions").orderBy("name", "asc");
-      // isLoading(true);
-      if (window.innerWidth <= 1300) {
-        const unsub = query.limit(10).onSnapshot(
-          coll => {
-            setLastDOC(coll.docs[coll.docs.length - 1]);
-            const newHeroes = [];
-            coll.forEach(doc => {
-              const { name, votes, upvoters, downvoters } = doc.data();
-              newHeroes.push({
-                key: doc.id,
-                doc,
-                name,
-                votes,
-                upvoters,
-                downvoters
-              });
-            });
-            setHeroesArr(newHeroes);
-            //  isLoading(false);
-          },
-          error => {
-            console.log(error);
-          }
-        );
-        return () => {
-          unsub();
-        };
-      } else {
-        const unsubscribe = query.onSnapshot(
-          coll => {
-            setLastDOC(coll.docs[coll.docs.length - 1]);
-            const newHeroes = [];
-            coll.forEach(doc => {
-              const { name, votes, upvoters, downvoters } = doc.data();
-              newHeroes.push({
-                key: doc.id,
-                doc,
-                name,
-                votes,
-                upvoters,
-                downvoters
-              });
-            });
-            setHeroesArr(newHeroes);
-            isLoading(false);
-          },
-          error => {
-            console.log(error);
-          }
-        );
-        return () => {
-          unsubscribe();
-        };
-      }
+    if (filmState && !switchState && secondQuery) {
+      isLoading(true);
+      setSecondQuery(false);
     }
-  }, [charNameState, db]);
-
-  useEffect(() => {
-    if (filmState) {
-      const query = db.collection("filmOptions").orderBy("votes", "desc");
-      if (firstFilmQuery) {
-        isLoading(true);
-      }
-
-      if (window.innerWidth <= 1300) {
-        const unsub = query.limit(10).onSnapshot(
-          coll => {
-            setLastDOC(coll.docs[coll.docs.length - 1]);
-            const newHeroes = [];
-            coll.forEach(doc => {
-              const { name, votes, upvoters, downvoters } = doc.data();
-              newHeroes.push({
-                key: doc.id,
-                doc,
-                name,
-                votes,
-                upvoters,
-                downvoters
-              });
+    if (window.innerWidth <= 1300) {
+      const unsub = query.limit(10).onSnapshot(
+        coll => {
+          let pagedDoc = coll.docs[coll.docs.length - 1];
+          console.log(pagedDoc);
+          setLastDOC(pagedDoc);
+          const arr = [];
+          coll.forEach(doc => {
+            const { name, votes, upvoters, downvoters } = doc.data();
+            arr.push({
+              key: doc.id,
+              doc,
+              name,
+              votes,
+              upvoters,
+              downvoters
             });
-            setFilmArr(newHeroes);
-            isLoading(false);
-            setFirstFilmQuery(false);
-          },
-          error => {
-            console.log(error);
-          }
-        );
-        return () => {
-          unsub();
-        };
-      } else {
-        const unsubscribe = query.onSnapshot(
-          coll => {
-            setLastDOC(coll.docs[coll.docs.length - 1]);
-            const newHeroes = [];
-            coll.forEach(doc => {
-              const { name, votes, upvoters, downvoters } = doc.data();
-              newHeroes.push({
-                key: doc.id,
-                doc,
-                name,
-                votes,
-                upvoters,
-                downvoters
-              });
+          });
+          populateArrays(arr);
+          isLoading(false);
+        },
+        error => {
+          console.log(error);
+        }
+      );
+      return () => {
+        unsub();
+      };
+    } else {
+      const unsubscribe = query.onSnapshot(
+        coll => {
+          setLastDOC(coll.docs[coll.docs.length - 1]);
+          const arr = [];
+          coll.forEach(doc => {
+            const { name, votes, upvoters, downvoters } = doc.data();
+            arr.push({
+              key: doc.id,
+              doc,
+              name,
+              votes,
+              upvoters,
+              downvoters
             });
-            setFilmArr(newHeroes);
-            isLoading(false);
-            setFirstFilmQuery(false);
-          },
-          error => {
-            console.log(error);
-          }
-        );
-        return () => {
-          unsubscribe();
-        };
-      }
+          });
+          populateArrays(arr);
+          isLoading(false);
+        },
+        error => {
+          console.log(error);
+        }
+      );
+      return () => {
+        unsubscribe();
+      };
     }
-  }, [filmState, firstFilmQuery, db]);
+  }, [
+    db,
+    charState,
+    firstQuery,
+    charNameState,
+    filmState,
+    filmNameState,
+    switchState,
+    secondQuery,
+    populateArrays
+  ]);
 
-  useEffect(() => {
-    if (filmNameState) {
-      const query = db.collection("filmOptions").orderBy("name", "asc");
-      //  isLoading(true);
-      if (window.innerWidth <= 1300) {
-        const unsub = query.limit(10).onSnapshot(
-          coll => {
-            setLastDOC(coll.docs[coll.docs.length - 1]);
-            const newHeroes = [];
-            coll.forEach(doc => {
-              const { name, votes, upvoters, downvoters } = doc.data();
-              newHeroes.push({
-                key: doc.id,
-                doc,
-                name,
-                votes,
-                upvoters,
-                downvoters
+  // lastDoc (also 'query') was making useEFfect run on endless loop, thus the repetition here
+  //useCallback -> could not return snapshot listener in useEffect
+  const onPageForward = () => {
+    const query =
+      (charState &&
+        switchState &&
+        db.collection("characterOptions").orderBy("votes", "desc")) ||
+      (charNameState &&
+        switchState &&
+        db.collection("characterOptions").orderBy("name", "asc")) ||
+      (filmState &&
+        !switchState &&
+        db.collection("filmOptions").orderBy("votes", "desc")) ||
+      (filmNameState &&
+        !switchState &&
+        db.collection("filmOptions").orderBy("name", "asc"));
+
+    let query10 = query.limit(10);
+
+    query10.startAfter(lastDOC).onSnapshot(
+      coll => {
+        setLastDOC(coll.docs[coll.docs.length - 1]);
+        const newArr = [];
+        coll.forEach(doc => {
+          const { name, votes, upvoters, downvoters } = doc.data();
+          newArr.push({
+            key: doc.id,
+            doc,
+            name,
+            votes,
+            upvoters,
+            downvoters
+          });
+        });
+
+        if (!newArr.length) {
+          query10.onSnapshot(
+            coll => {
+              setLastDOC(coll.docs[coll.docs.length - 1]);
+              const newArr = [];
+              coll.forEach(doc => {
+                const { name, votes, upvoters, downvoters } = doc.data();
+                newArr.push({
+                  key: doc.id,
+                  doc,
+                  name,
+                  votes,
+                  upvoters,
+                  downvoters
+                });
               });
-            });
-            setFilmArr(newHeroes);
-            //    isLoading(false);
-          },
-          error => {
-            console.log(error);
-          }
-        );
-        return () => {
-          unsub();
-        };
-      } else {
-        const unsubscribe = query.onSnapshot(
-          coll => {
-            setLastDOC(coll.docs[coll.docs.length - 1]);
-            const newHeroes = [];
-            coll.forEach(doc => {
-              const { name, votes, upvoters, downvoters } = doc.data();
-              newHeroes.push({
-                key: doc.id,
-                doc,
-                name,
-                votes,
-                upvoters,
-                downvoters
-              });
-            });
-            setFilmArr(newHeroes);
-            //   isLoading(false);
-          },
-          error => {
-            console.log(error);
-          }
-        );
-        return () => {
-          unsubscribe();
-        };
+              populateArrays(newArr);
+            },
+            error => {
+              console.log(error);
+            }
+          );
+        } else {
+          populateArrays(newArr);
+        }
+      },
+      error => {
+        console.log(error);
       }
-    }
-  }, [filmNameState, db]);
-
-  const namePageFn = (orderField, orderDirection) => {
-    const query = db
-      .collection("characterOptions")
-      .orderBy(orderField, orderDirection)
-      .limit(10);
-    query.startAfter(lastDOC).onSnapshot(function(querySnapshot) {
-      setLastDOC(querySnapshot.docs[querySnapshot.docs.length - 1]);
-      const newArr = [];
-      querySnapshot.forEach(function(doc) {
-        const { name, votes, upvoters, downvoters } = doc.data();
-        newArr.push({ key: doc.id, doc, name, votes, upvoters, downvoters });
-      });
-      setHeroesArr(newArr);
-      if (!newArr.length) {
-        query.onSnapshot(
-          coll => {
-            setLastDOC(coll.docs[coll.docs.length - 1]);
-            const newArr = [];
-            coll.forEach(doc => {
-              const { name, votes, upvoters, downvoters } = doc.data();
-              newArr.push({
-                key: doc.id,
-                doc,
-                name,
-                votes,
-                upvoters,
-                downvoters
-              });
-            });
-            setHeroesArr(newArr);
-          },
-          error => {
-            console.log(error);
-          }
-        );
-      }
-    });
-  };
-
-  const charPageForward = () => {
-    namePageFn("votes", "desc");
-  };
-
-  const charNamePageForward = () => {
-    namePageFn("name", "asc");
-  };
-
-  const filmPageFn = (orderField, orderDirection) => {
-    const query = db
-      .collection("filmOptions")
-      .orderBy(orderField, orderDirection)
-      .limit(10);
-    query.startAfter(lastDOC).onSnapshot(function(querySnapshot) {
-      setLastDOC(querySnapshot.docs[querySnapshot.docs.length - 1]);
-      const newArr = [];
-      querySnapshot.forEach(function(doc) {
-        const { name, votes, upvoters, downvoters } = doc.data();
-        newArr.push({ key: doc.id, doc, name, votes, upvoters, downvoters });
-      });
-      setFilmArr(newArr);
-      if (!newArr.length) {
-        query.onSnapshot(
-          coll => {
-            setLastDOC(coll.docs[coll.docs.length - 1]);
-            const newArr = [];
-            coll.forEach(doc => {
-              const { name, votes, upvoters, downvoters } = doc.data();
-              newArr.push({
-                key: doc.id,
-                doc,
-                name,
-                votes,
-                upvoters,
-                downvoters
-              });
-            });
-            setFilmArr(newArr);
-          },
-          error => {
-            console.log(error);
-          }
-        );
-      }
-    });
-  };
-  const filmPageForward = () => {
-    filmPageFn("votes", "desc");
-  };
-
-  const filmNameStatePageForward = () => {
-    filmPageFn("name", "asc");
+    );
   };
 
   const storeVal = firebase.firestore.FieldValue;
 
   const onCharacterUpVote = i => {
-    const collRef = db.collection("characterOptions");
-    setHeroesArr(heroesArr =>
-      heroesArr.map((item, o) => {
-        if (
-          i === o &&
-          !item.downvoters.includes(UID) &&
-          !item.upvoters.includes(UID)
-        ) {
-          collRef.doc(item.key).update({
-            votes: storeVal.increment(1),
-            upvoters: storeVal.arrayUnion(UID),
-            totalUpvotes: storeVal.increment(1)
-          });
-        } else if (
-          i === o &&
-          !item.downvoters.includes(UID) &&
-          item.upvoters.includes(UID)
-        ) {
-          collRef.doc(item.key).update({
-            votes: storeVal.increment(-1),
-            upvoters: storeVal.arrayRemove(UID),
-            totalUpvotes: storeVal.increment(-1)
-          });
-        } else if (
-          i === o &&
-          item.downvoters.includes(UID) &&
-          !item.upvoters.includes(UID)
-        ) {
-          collRef.doc(item.key).update({
-            votes: storeVal.increment(2),
-            upvoters: storeVal.arrayUnion(UID),
-            downvoters: storeVal.arrayRemove(UID),
-            totalUpvotes: storeVal.increment(1),
-            totalDownvotes: storeVal.increment(-1)
-          });
-        }
-        return item;
-      })
-    );
+    UpvoteFn(i, heroesArr, "characterOptions", UID, storeVal, db);
   };
 
   const onCharacterDownVote = i => {
-    const collRef = db.collection("characterOptions");
-    setHeroesArr(heroesArr =>
-      heroesArr.map((item, o) => {
-        if (
-          i === o &&
-          !item.downvoters.includes(UID) &&
-          !item.upvoters.includes(UID)
-        ) {
-          collRef.doc(item.key).update({
-            votes: storeVal.increment(-1),
-            downvoters: storeVal.arrayUnion(UID),
-            totalDownvotes: storeVal.increment(1)
-          });
-        } else if (
-          i === o &&
-          item.downvoters.includes(UID) &&
-          !item.upvoters.includes(UID)
-        ) {
-          collRef.doc(item.key).update({
-            votes: storeVal.increment(1),
-            downvoters: storeVal.arrayRemove(UID),
-            totalDownvotes: storeVal.increment(-1)
-          });
-        } else if (
-          i === o &&
-          !item.downvoters.includes(UID) &&
-          item.upvoters.includes(UID)
-        ) {
-          collRef.doc(item.key).update({
-            votes: storeVal.increment(-2),
-            downvoters: storeVal.arrayUnion(UID),
-            upvoters: storeVal.arrayRemove(UID),
-            totalDownvotes: storeVal.increment(1),
-            totalUpvotes: storeVal.increment(-1)
-          });
-        }
-        return item;
-      })
-    );
+    DownvoteFn(i, heroesArr, "characterOptions", UID, storeVal, db);
   };
 
   const onFilmUpvote = i => {
-    const collRef = db.collection("filmOptions");
-    setFilmArr(prevFilmArr =>
-      prevFilmArr.map((item, o) => {
-        if (
-          i === o &&
-          !item.downvoters.includes(UID) &&
-          !item.upvoters.includes(UID)
-        ) {
-          collRef.doc(item.key).update({
-            votes: storeVal.increment(1),
-            upvoters: storeVal.arrayUnion(UID),
-            totalUpvotes: storeVal.increment(1)
-          });
-        } else if (
-          i === o &&
-          !item.downvoters.includes(UID) &&
-          item.upvoters.includes(UID)
-        ) {
-          collRef.doc(item.key).update({
-            votes: storeVal.increment(-1),
-            upvoters: storeVal.arrayRemove(UID),
-            totalUpvotes: storeVal.increment(-1)
-          });
-        } else if (
-          i === o &&
-          item.downvoters.includes(UID) &&
-          !item.upvoters.includes(UID)
-        ) {
-          collRef.doc(item.key).update({
-            votes: storeVal.increment(2),
-            upvoters: storeVal.arrayUnion(UID),
-            downvoters: storeVal.arrayRemove(UID),
-            totalUpvotes: storeVal.increment(1),
-            totalDownvotes: storeVal.increment(-1)
-          });
-        }
-        return item;
-      })
-    );
+    UpvoteFn(i, filmArr, "filmOptions", UID, storeVal, db);
   };
 
   const onFilmDownvote = i => {
-    const collRef = db.collection("filmOptions");
-    setFilmArr(prevFilmArr =>
-      prevFilmArr.map((item, o) => {
-        if (
-          i === o &&
-          !item.downvoters.includes(UID) &&
-          !item.upvoters.includes(UID)
-        ) {
-          collRef.doc(item.key).update({
-            votes: storeVal.increment(-1),
-            downvoters: storeVal.arrayUnion(UID),
-            totalDownvotes: storeVal.increment(1)
-          });
-        } else if (
-          i === o &&
-          item.downvoters.includes(UID) &&
-          !item.upvoters.includes(UID)
-        ) {
-          collRef.doc(item.key).update({
-            votes: storeVal.increment(1),
-            downvoters: storeVal.arrayRemove(UID),
-            totalDownvotes: storeVal.increment(-1)
-          });
-        } else if (
-          i === o &&
-          !item.downvoters.includes(UID) &&
-          item.upvoters.includes(UID)
-        ) {
-          collRef.doc(item.key).update({
-            votes: storeVal.increment(-2),
-            downvoters: storeVal.arrayUnion(UID),
-            upvoters: storeVal.arrayRemove(UID),
-            totalDownvotes: storeVal.increment(1),
-            totalUpvotes: storeVal.increment(-1)
-          });
-        }
-        return item;
-      })
-    );
+    DownvoteFn(i, filmArr, "filmOptions", UID, storeVal, db);
   };
 
-  const charToggle = () => {
-    setCharState(!charState);
-    setCharNameState(!charNameState);
+  const voteNameToggle = () => {
+    if (switchState) {
+      setCharState(!charState);
+      setCharNameState(!charNameState);
+    } else {
+      setFilmState(!filmState);
+      setFilmNameState(!filmNameState);
+    }
   };
 
   useEffect(() => {
@@ -558,11 +236,7 @@ const Home = () => {
 
   const rankerMain = () => (
     <>
-      <div className="centerButton">
-        <Button onClick={charToggle}>
-          {charState ? "Sort by Name" : "Sort by Score"}
-        </Button>
-      </div>
+      <NameScoreToggleButton state={charState} onToggle={voteNameToggle} />
       {loading && <Spinner />}
       <div className="flexMain">
         {heroesArr.map((item, i) => (
@@ -586,41 +260,14 @@ const Home = () => {
           </div>
         ))}
       </div>
-      <div className="buttonContainer">
-        <Button onClick={charState ? charPageForward : charNamePageForward}>
-          Next{" "}
-          <FontAwesomeIcon
-            title="Next Results"
-            aria-hidden="true"
-            icon="arrow-right"
-          />
-        </Button>
-      </div>
+      <PageForwardButton onClick={onPageForward} />}
     </>
   );
 
-  const filmToggle = () => {
-    if (!filmState && !filmNameState) {
-      setFilmState(true);
-    }
-
-    if (filmState) {
-      setFilmState(false);
-      setFilmNameState(true);
-    }
-    if (filmNameState) {
-      setFilmNameState(false);
-      setFilmState(true);
-    }
-  };
-
   const filmRankerMain = () => (
     <>
-      <div className="centerButton">
-        <Button onClick={filmToggle}>
-          {filmState ? "Sort by Name" : "Sort by Score"}
-        </Button>{" "}
-      </div>
+      <NameScoreToggleButton state={filmState} onToggle={voteNameToggle} />
+
       {loading && <Spinner />}
       <div className="flexMain">
         {filmArr.map((item, i) => (
@@ -645,30 +292,9 @@ const Home = () => {
           </div>
         ))}
       </div>
-
-      <div className="buttonContainer">
-        <Button
-          onClick={filmState ? filmPageForward : filmNameStatePageForward}
-        >
-          Next{" "}
-          <FontAwesomeIcon
-            title="Next Results"
-            aria-hidden="true"
-            icon="arrow-right"
-          />
-        </Button>
-      </div>
+      <PageForwardButton onClick={onPageForward} />
     </>
   );
-
-  const stateSwitch = () => {
-    setSwitchState(false);
-    if (filmNameState) {
-      return;
-    } else {
-      setFilmState(true);
-    }
-  };
 
   return (
     <>
@@ -679,19 +305,12 @@ const Home = () => {
           content="Rank all your favorite MCU/Avengers films and characters in order of most-liked to least-liked."
         />
       </Helmet>
-      <div className="textCenter headerTop">
-        <h1>Marvel Cinemative Universe/Avengers Character and Film Ranker</h1>
-        <p>
-          Using a Reddit-like upvote and downvote system, rank the MCU
-          characters and movies in order from best to worst, or from most-liked
-          to least-liked. The lists update in real-time!
-        </p>
-      </div>
+      <HomeDescription />
       <div className="marginBottom ">
         <SwitchButtons
           switchState={switchState}
           onClickLeft={() => setSwitchState(true)}
-          onClickRight={stateSwitch}
+          onClickRight={() => setSwitchState(false)}
         />
 
         {switchState && rankerMain()}
