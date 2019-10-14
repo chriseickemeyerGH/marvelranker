@@ -5,4 +5,4 @@ const TextBox = ({ className = "", ...props }) => (
   <input className={`${className} textBoxStyles`} {...props} />
 );
 
-export default TextBox;
+export { TextBox };

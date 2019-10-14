@@ -1,5 +1,6 @@
 import { Route, Switch } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import { PasswordVerifyModal } from "../Components/PasswordVerifyModal";
 import Home from "./Home";
 import Login from "./Auth/Login";
 import { ProtectedRoute } from "../Components/ProtectedRoute";
@@ -7,12 +8,11 @@ import SignUp from "./Auth/SignUp";
 import NoMatchRoute from "./404";
 import firebase from "../firebase";
 import "../css/router.css";
-import { RouterLink, RouterButton } from "../Components/RouterLinks";
+import { RouterButtonGroup } from "../Components/RouterButtonGroup";
+import { RouterLinkGroup } from "../Components/RouterLinkGroup";
 import SnackBar from "../Components/SnackBar";
-import Modal from "../Components/Modal";
-import TextBox from "../Components/TextBox";
+
 import Footer from "../Components/Footer";
-import Button from "../Components/Button";
 
 const UserContext = React.createContext(null);
 
@@ -100,75 +100,25 @@ const Router = () => {
       });
   };
 
-  const closeModal = () => {
+  const closeModal = e => {
+    e.preventDefault();
     setShowModal(false);
     showModalError(false);
     setVerifiedPassword("");
   };
 
-  const modalComponent = () => (
-    <>
-      <Modal title="Verify Password" showModal={showModal}>
-        <p>You must verify your password to delete your account. </p>
-
-        {modalError && <p className="error">{modalErrorText}</p>}
-        <form>
-          <label htmlFor="email">Email:</label>
-          <br />
-
-          <TextBox
-            readOnly={true}
-            type="email"
-            name="email"
-            value={USER ? USER.email : ""}
-          />
-          <label htmlFor="password">Password:</label>
-          <br />
-          <TextBox
-            type="password"
-            name="password"
-            value={verifiedPassword}
-            onChange={e => setVerifiedPassword(e.target.value)}
-          />
-          <span>
-            <Button
-              type="submit"
-              className="buttonSpacer"
-              onClick={onDeleteAccount}
-            >
-              Delete my account
-            </Button>
-            <Button className="buttonSpacer" onClick={closeModal}>
-              Close
-            </Button>
-          </span>
-        </form>
-      </Modal>
-    </>
-  );
-
   return (
     <UserContext.Provider value={UID}>
-      <div className="centerTheRouter routerLinkCenter">
-        {!UID && (
-          <>
-            <RouterLink to={"/"} label="Home" exact={true} />
-            <RouterLink to={"/login"} label="Login" />
-            <RouterLink to={"/signup"} label="Sign Up" />
-          </>
-        )}
-      </div>
-      <div className="centerTheRouter routerButtonsCenter">
-        {UID && (
-          <>
-            <RouterButton onClick={onSignOut}>Sign Out</RouterButton>
-            <RouterButton onClick={() => setShowModal(true)}>
-              Delete Your Account
-            </RouterButton>
-          </>
-        )}
-      </div>
-      <section id="page-container">
+      {!UID && <RouterLinkGroup />}
+
+      {UID && (
+        <RouterButtonGroup
+          onSignOut={onSignOut}
+          onDeleteAccountClick={() => setShowModal(true)}
+        />
+      )}
+
+      <div id="page-container">
         <div id="content-wrap">
           <Switch>
             <Route exact path="/" component={Home} />
@@ -180,11 +130,20 @@ const Router = () => {
             />
             <Route component={NoMatchRoute} />
           </Switch>
-
-          {modalComponent()}
+          <PasswordVerifyModal
+            title="Verify Password"
+            showModal={showModal}
+            modalErrorState={modalError}
+            modalErrorText={modalErrorText}
+            currentEmailVal={USER ? USER.email : ""}
+            passwordVal={verifiedPassword}
+            passwordOnChange={e => setVerifiedPassword(e.target.value)}
+            onSubmit={onDeleteAccount}
+            onModalClose={closeModal}
+          />
         </div>
         <Footer />
-      </section>
+      </div>
       <SnackBar
         snackBarVisibility={signOutSnackBar}
         snackBarClose={() => showSignOutSnackBar(false)}

@@ -36,32 +36,6 @@ const VotingButtons = ({
         </div>
         <VotesNum votes={votes} />
       </div>
-
-      {/*!loggedIn && (
-        <div className="buttonBunch">
-          <div className="inline icons">
-            <FontAwesomeIcon
-              onClick={signedOutVote}
-              title="You must be logged in to upvote"
-              icon="angle-double-up"
-              size="2x"
-              className="icon"
-            />
-            <br />
-            <ScreenReader>You must be logged in to upvote</ScreenReader>
-
-            <FontAwesomeIcon
-              onClick={signedOutVote}
-              title="You must be logged in to downvote"
-              icon="angle-double-down"
-              size="2x"
-              className="icon"
-            />
-            <ScreenReader>You must be logged in to downvote</ScreenReader>
-          </div>
-          <VotesNum votes={votes} />
-        </div>
-      ) */}
     </div>
   );
 };

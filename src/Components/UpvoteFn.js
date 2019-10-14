@@ -1,6 +1,5 @@
 export const UpvoteFn = (i, array, collection, UID, storeVal, db) => {
   const collRef = db.collection(collection);
-
   array.map((item, o) => {
     if (
       i === o &&

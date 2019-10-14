@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import firebase from "../../firebase.js";
 import "../../css/Components/signUp.css";
-import TextBox from "../../Components/TextBox";
+import { AuthInputs } from "../../Components/AuthInputs";
 import GoogleButton from "../../Components/GoogleButton";
 import Button from "../../Components/Button";
 import { Helmet } from "react-helmet";
@@ -53,24 +53,11 @@ function SignUp() {
         <h1>Sign Up</h1>
         <>{errorMessage && <p className="error">{errorMessage}</p>}</>
         <form>
-          <label htmlFor="email">Email:</label>
-          <br />
-          <TextBox
-            type="email"
-            name="email"
-            value={email}
-            required
-            onChange={onEmailChange}
-          />
-          <br />
-          <label htmlFor="password">Password:</label>
-          <br />
-          <TextBox
-            type="password"
-            name="password"
-            value={passWord}
-            onChange={onPassWordChange}
-            required
+          <AuthInputs
+            emailVal={email}
+            emailOnChange={onEmailChange}
+            passwordVal={passWord}
+            passwordOnChange={onPassWordChange}
           />
           <br />
           {passWordWarning && <p>Password must be at least 6 characters</p>}
