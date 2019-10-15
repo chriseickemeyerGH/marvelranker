@@ -7,9 +7,9 @@
   border-radius: 10px 0 10px 10px;
   padding: 5px;
   position: fixed;
+  bottom: -100px;
   z-index: 15;
   left: 50%;
-
   font-size: 20px;
   border: 2px solid black;
   font-weight: 700;
@@ -23,7 +23,7 @@
 
 @keyframes slideIn {
   0% {
-    bottom: 0;
+    bottom: -100px;
   }
   100% {
     bottom: 40px;
