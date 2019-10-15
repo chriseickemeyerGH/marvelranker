@@ -145,11 +145,11 @@ const Home = () => {
   };
 
   const storeVal = firebase.firestore.FieldValue;
+  const array = charactersShowing ? heroesArr : filmArr;
+  const collection = charactersShowing ? "characterOptions" : "filmOptions";
 
   const onUpvote = i => {
     if (UID) {
-      const array = charactersShowing ? heroesArr : filmArr;
-      const collection = charactersShowing ? "characterOptions" : "filmOptions";
       UpvoteFn(i, array, collection, UID, storeVal, db);
     } else {
       showSignInSnackBar(true);
@@ -157,8 +157,6 @@ const Home = () => {
   };
   const onDownvote = i => {
     if (UID) {
-      const array = charactersShowing ? heroesArr : filmArr;
-      const collection = charactersShowing ? "characterOptions" : "filmOptions";
       DownvoteFn(i, array, collection, UID, storeVal, db);
     } else {
       showSignInSnackBar(true);
@@ -186,24 +184,15 @@ const Home = () => {
           onClickLeft={() => setCharactersShowing(true)}
           onClickRight={() => setCharactersShowing(false)}
         />
-        {charactersShowing ? (
-          <VoteView
-            onUpvote={onUpvote}
-            onDownvote={onDownvote}
-            array={heroesArr}
-            loggedIn={UID}
-            onPageForwardClick={onPageForward}
-            loading={loading}
-          />
-        ) : (
-          <VoteView
-            onUpvote={onUpvote}
-            onDownvote={onDownvote}
-            array={filmArr}
-            loggedIn={UID}
-            onPageForwardClick={onPageForward}
-          />
-        )}
+
+        <VoteView
+          onUpvote={onUpvote}
+          onDownvote={onDownvote}
+          array={charactersShowing ? heroesArr : filmArr}
+          loggedIn={UID}
+          onPageForwardClick={onPageForward}
+          loading={loading}
+        />
       </div>
       <SnackBar
         snackBarVisibility={signInSnackBar}
