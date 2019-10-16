@@ -20,83 +20,82 @@ const Home = () => {
   const [lastDOC, setLastDOC] = useState("");
   const [filmPageDoc, setFilmPageDoc] = useState("");
   const db = firebase.firestore();
+  const [charQuery] = useState(
+    db
+      .collection("characterOptions")
+      .orderBy("votes", "desc")
+      .limit(10)
+  );
+  const [filmQuery] = useState(
+    db
+      .collection("filmOptions")
+      .orderBy("votes", "desc")
+      .limit(10)
+  );
   // **these useEffect functions are repetitive because
   // cleanup functions cannot be returned in useCallback hooks
   // or normal functions used within useEffect
 
   useEffect(() => {
-    const unsub = db
-      .collection("characterOptions")
-      .orderBy("votes", "desc")
-      .limit(10)
-      .onSnapshot(
-        coll => {
-          let pagedDoc = coll.docs[coll.docs.length - 1];
-          setLastDOC(pagedDoc);
-          const arr = [];
-          coll.forEach(doc => {
-            const { name, votes, upvoters, downvoters } = doc.data();
-            arr.push({
-              key: doc.id,
-              doc,
-              name,
-              votes,
-              upvoters,
-              downvoters
-            });
+    const unsub = charQuery.onSnapshot(
+      coll => {
+        let pagedDoc = coll.docs[coll.docs.length - 1];
+        //   console.log(pagedDoc);
+        setLastDOC(pagedDoc);
+        const arr = [];
+        coll.forEach(doc => {
+          const { name, votes, upvoters, downvoters } = doc.data();
+          arr.push({
+            key: doc.id,
+            doc,
+            name,
+            votes,
+            upvoters,
+            downvoters
           });
-          setHeroesArr(arr);
-          isLoading(false);
-        },
-        error => {
-          console.log(error);
-        }
-      );
+        });
+        setHeroesArr(arr);
+        isLoading(false);
+      },
+      error => {
+        console.log(error);
+      }
+    );
     return () => unsub();
-  }, [db]);
+  }, [charQuery]);
 
   useEffect(() => {
-    const unsub = db
-      .collection("filmOptions")
-      .orderBy("votes", "desc")
-      .limit(10)
-      .onSnapshot(
-        coll => {
-          let pagedDoc = coll.docs[coll.docs.length - 1];
-          setFilmPageDoc(pagedDoc);
-          const arr = [];
-          coll.forEach(doc => {
-            const { name, votes, upvoters, downvoters } = doc.data();
-            arr.push({
-              key: doc.id,
-              doc,
-              name,
-              votes,
-              upvoters,
-              downvoters
-            });
+    const unsub = filmQuery.onSnapshot(
+      coll => {
+        let pagedDoc = coll.docs[coll.docs.length - 1];
+        //  console.log(pagedDoc);
+        setFilmPageDoc(pagedDoc);
+        const arr = [];
+        coll.forEach(doc => {
+          const { name, votes, upvoters, downvoters } = doc.data();
+          arr.push({
+            key: doc.id,
+            doc,
+            name,
+            votes,
+            upvoters,
+            downvoters
           });
-          setFilmArr(arr);
-        },
-        error => {
-          console.log(error);
-        }
-      );
+        });
+        setFilmArr(arr);
+      },
+      error => {
+        console.log(error);
+      }
+    );
     return () => unsub();
-  }, [db]);
+  }, [filmQuery]);
 
   const onPageForward = () => {
-    const query = charactersShowing
-      ? db
-          .collection("characterOptions")
-          .orderBy("votes", "desc")
-          .limit(10)
-      : db
-          .collection("filmOptions")
-          .orderBy("votes", "desc")
-          .limit(10);
+    const query = charactersShowing ? charQuery : filmQuery;
+    const startAfterDoc = charactersShowing ? lastDOC : filmPageDoc;
 
-    query.startAfter(charactersShowing ? lastDOC : filmPageDoc).onSnapshot(
+    query.startAfter(startAfterDoc).onSnapshot(
       coll => {
         let pagedDoc = coll.docs[coll.docs.length - 1];
         charactersShowing && setLastDOC(pagedDoc);
