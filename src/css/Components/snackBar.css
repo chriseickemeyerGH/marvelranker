@@ -14,7 +14,7 @@
   border: 2px solid black;
   font-weight: 700;
   animation-name: slideIn;
-  animation-duration: 0.5s;
+  animation-duration: 0.2s;
   animation-timing-function: ease;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
@@ -26,7 +26,7 @@
     bottom: -100px;
   }
   100% {
-    bottom: 40px;
+    bottom: 20px;
   }
 }
 .snackBarP {
