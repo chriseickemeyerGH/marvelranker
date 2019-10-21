@@ -34,13 +34,12 @@ const Home = () => {
   );
   // **these useEffect functions are repetitive because
   // cleanup functions cannot be returned in useCallback hooks
-  // or normal functions used within useEffect
+  // or normal functions used within useEffect with Firebase's unsubscribe functionality
 
   useEffect(() => {
     const unsub = charQuery.onSnapshot(
       coll => {
-        let pagedDoc = coll.docs[coll.docs.length - 1];
-        //   console.log(pagedDoc);
+        const pagedDoc = coll.docs[coll.docs.length - 1];
         setLastDOC(pagedDoc);
         const arr = [];
         coll.forEach(doc => {
@@ -67,8 +66,7 @@ const Home = () => {
   useEffect(() => {
     const unsub = filmQuery.onSnapshot(
       coll => {
-        let pagedDoc = coll.docs[coll.docs.length - 1];
-        //  console.log(pagedDoc);
+        const pagedDoc = coll.docs[coll.docs.length - 1];
         setFilmPageDoc(pagedDoc);
         const arr = [];
         coll.forEach(doc => {
@@ -106,10 +104,14 @@ const Home = () => {
     const query = charactersShowing ? charQuery : filmQuery;
     const startAfterDoc = charactersShowing ? lastDOC : filmPageDoc;
 
+    const choosePageDoc = coll => {
+      const pagedDoc = coll.docs[coll.docs.length - 1];
+      charactersShowing ? setLastDOC(pagedDoc) : setFilmPageDoc(pagedDoc);
+    };
+
     query.startAfter(startAfterDoc).onSnapshot(
       coll => {
-        let pagedDoc = coll.docs[coll.docs.length - 1];
-        charactersShowing ? setLastDOC(pagedDoc) : setFilmPageDoc(pagedDoc);
+        choosePageDoc(coll);
         const arr = [];
         coll.forEach(doc => {
           const { name, votes, upvoters, downvoters } = doc.data();
@@ -124,8 +126,7 @@ const Home = () => {
         });
         if (!arr.length) {
           query.onSnapshot(coll => {
-            let pagedDoc = coll.docs[coll.docs.length - 1];
-            charactersShowing ? setLastDOC(pagedDoc) : setFilmPageDoc(pagedDoc);
+            choosePageDoc(coll);
             const arr = [];
             coll.forEach(doc => {
               const { name, votes, upvoters, downvoters } = doc.data();
@@ -179,7 +180,6 @@ const Home = () => {
           onClickLeft={() => setCharactersShowing(true)}
           onClickRight={() => setCharactersShowing(false)}
         />
-
         <VoteView
           onUpvote={onUpvote}
           onDownvote={onDownvote}
