@@ -5,17 +5,15 @@ footer {
   height: 50px;
   background-color: rgb(214, 214, 214);
 }
-.marginLeft {
-  margin-left: 15px;
-}
-.footerHeart {
-  margin-left: 5px;
-  color: darkred;
-}
+
 .repoLink {
   position: absolute;
   bottom: 15px;
   left: 50%;
   width: 20px;
   margin-left: -20px;
+  color: black;
+}
+.repoLink:visited {
+  color: black;
 }

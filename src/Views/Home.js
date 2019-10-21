@@ -91,6 +91,17 @@ const Home = () => {
     return () => unsub();
   }, [filmQuery]);
 
+  useEffect(() => {
+    if (signInSnackBar) {
+      const timeout = setTimeout(() => {
+        showSignInSnackBar(false);
+      }, 5000);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [signInSnackBar]);
+
   const onPageForward = () => {
     const query = charactersShowing ? charQuery : filmQuery;
     const startAfterDoc = charactersShowing ? lastDOC : filmPageDoc;
@@ -98,8 +109,7 @@ const Home = () => {
     query.startAfter(startAfterDoc).onSnapshot(
       coll => {
         let pagedDoc = coll.docs[coll.docs.length - 1];
-        charactersShowing && setLastDOC(pagedDoc);
-        !charactersShowing && setFilmPageDoc(pagedDoc);
+        charactersShowing ? setLastDOC(pagedDoc) : setFilmPageDoc(pagedDoc);
         const arr = [];
         coll.forEach(doc => {
           const { name, votes, upvoters, downvoters } = doc.data();
@@ -115,8 +125,7 @@ const Home = () => {
         if (!arr.length) {
           query.onSnapshot(coll => {
             let pagedDoc = coll.docs[coll.docs.length - 1];
-            charactersShowing && setLastDOC(pagedDoc);
-            !charactersShowing && setFilmPageDoc(pagedDoc);
+            charactersShowing ? setLastDOC(pagedDoc) : setFilmPageDoc(pagedDoc);
             const arr = [];
             coll.forEach(doc => {
               const { name, votes, upvoters, downvoters } = doc.data();
@@ -129,12 +138,10 @@ const Home = () => {
                 downvoters
               });
             });
-            charactersShowing && setHeroesArr(arr);
-            !charactersShowing && setFilmArr(arr);
+            charactersShowing ? setHeroesArr(arr) : setFilmArr(arr);
           });
         } else {
-          charactersShowing && setHeroesArr(arr);
-          !charactersShowing && setFilmArr(arr);
+          charactersShowing ? setHeroesArr(arr) : setFilmArr(arr);
         }
       },
       error => {
@@ -161,17 +168,6 @@ const Home = () => {
       showSignInSnackBar(true);
     }
   };
-
-  useEffect(() => {
-    if (signInSnackBar) {
-      const timeout = setTimeout(() => {
-        showSignInSnackBar(false);
-      }, 5000);
-      return () => {
-        clearTimeout(timeout);
-      };
-    }
-  }, [signInSnackBar]);
 
   return (
     <>

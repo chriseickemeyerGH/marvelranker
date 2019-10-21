@@ -7,9 +7,9 @@ const Footer = () => {
     <footer>
       <a
         className="repoLink"
-        href="https://gitlab.com/chris_eickemeyer/marvel-ranker"
+        href="https://github.com/chriseickemeyerGH/marvelranker"
       >
-        <FontAwesomeIcon icon={["fab", "gitlab"]} size="lg" />
+        <FontAwesomeIcon icon={["fab", "github"]} size="lg" />
       </a>
     </footer>
   );
