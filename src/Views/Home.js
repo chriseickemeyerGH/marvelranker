@@ -16,7 +16,6 @@ const Home = () => {
   const [filmArr, setFilmArr] = useState([]);
   const [charactersShowing, setCharactersShowing] = useState(true);
   const [signInSnackBar, showSignInSnackBar] = useState(false);
-  const [loading, isLoading] = useState(true);
   const [lastDOC, setLastDOC] = useState("");
   const [filmPageDoc, setFilmPageDoc] = useState("");
   const db = firebase.firestore();
@@ -54,7 +53,6 @@ const Home = () => {
           });
         });
         setHeroesArr(arr);
-        isLoading(false);
       },
       error => {
         console.log(error);
@@ -180,13 +178,13 @@ const Home = () => {
           onClickLeft={() => setCharactersShowing(true)}
           onClickRight={() => setCharactersShowing(false)}
         />
+
         <VoteView
           onUpvote={onUpvote}
           onDownvote={onDownvote}
           array={charactersShowing ? heroesArr : filmArr}
           loggedIn={UID}
           onPageForwardClick={onPageForward}
-          loading={loading}
         />
       </div>
       <SnackBar

@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { VotesNum } from "./VotesNum";
 import "../css/Components/votingButtons.css";
 
-const VotingButtons = ({
+export const VotingButtons = ({
   loggedIn,
   onUpvote,
   onDownvote,
@@ -39,5 +39,3 @@ const VotingButtons = ({
     </div>
   );
 };
-
-export default VotingButtons;

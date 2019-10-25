@@ -1,3 +1,9 @@
+.spinnerWrapper {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+}
+
 .loader,
 .loader:before,
 .loader:after {
