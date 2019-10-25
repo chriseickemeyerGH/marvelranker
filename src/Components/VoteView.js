@@ -12,17 +12,14 @@ export const VoteView = ({
   onPageForwardClick
 }) => {
   return (
-    <>
-      <Suspense fallback={<Spinner />}>
-        <VoteData
-          loggedIn={loggedIn}
-          onUpvote={onUpvote}
-          onDownvote={onDownvote}
-          array={array}
-        />
-      </Suspense>
-
+    <Suspense fallback={<Spinner />}>
+      <VoteData
+        loggedIn={loggedIn}
+        onUpvote={onUpvote}
+        onDownvote={onDownvote}
+        array={array}
+      />
       <PageForwardButton onClick={onPageForwardClick} />
-    </>
+    </Suspense>
   );
 };
