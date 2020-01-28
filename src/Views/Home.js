@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
-import firebase from "../firebase.js";
+//import firebase from "../firebase.js";
 import { Snackbar } from "../Components/SnackBar";
 import { SwitchButtons } from "../Components/SwitchButtons";
 import { VoteView } from "../Components/VoteView";
 import { UpvoteFn } from "../Components/UpvoteFn";
 import { DownvoteFn } from "../Components/DownvoteFn";
-import { UserContext } from "./Router";
+import { UserContext, FirebaseContext } from "./Router";
 import { HomeDescription } from "../Components/HomeDescription";
 import { HomeHead } from "../Components/HomeHead";
 import { Spinner } from "../Components/Spinner";
@@ -13,6 +13,7 @@ import "../css/Views/Home.css";
 
 const Home = () => {
   const UID = useContext(UserContext);
+  const firebase = useContext(FirebaseContext);
   const [heroesArr, setHeroesArr] = useState([]);
   const [filmArr, setFilmArr] = useState([]);
   const [charactersShowing, setCharactersShowing] = useState(true);

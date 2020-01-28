@@ -15,6 +15,7 @@ import { Snackbar } from "../Components/SnackBar";
 import Footer from "../Components/Footer";
 
 const UserContext = React.createContext(null);
+const FirebaseContext = React.createContext(null);
 
 const Router = () => {
   const [UID, setUID] = useState("");
@@ -104,54 +105,60 @@ const Router = () => {
   };
 
   return (
-    <UserContext.Provider value={UID}>
-      {!UID && <RouterLinkGroup />}
+    <FirebaseContext.Provider value={firebase}>
+      <UserContext.Provider value={UID}>
+        {!UID && <RouterLinkGroup />}
 
-      {UID && (
-        <RouterButtonGroup
-          onSignOut={onSignOut}
-          onDeleteAccountClick={() => setShowModal(true)}
-        />
-      )}
-
-      <div id="page-container">
-        <div id="content-wrap">
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <ProtectedRoute isLoggedIn={UID} path="/login" component={Login} />
-            <ProtectedRoute
-              isLoggedIn={UID}
-              path="/signup"
-              component={SignUp}
-            />
-            <Route component={NoMatchRoute} />
-          </Switch>
-          <PasswordVerifyModal
-            title="Verify Password"
-            showModal={showModal}
-            modalErrorState={modalError}
-            modalErrorText={modalErrorText}
-            currentEmailVal={USER ? USER.email : ""}
-            passwordVal={verifiedPassword}
-            passwordOnChange={e => setVerifiedPassword(e.target.value)}
-            onSubmit={onDeleteAccount}
-            onModalClose={closeModal}
+        {UID && (
+          <RouterButtonGroup
+            onSignOut={onSignOut}
+            onDeleteAccountClick={() => setShowModal(true)}
           />
+        )}
+
+        <div id="page-container">
+          <div id="content-wrap">
+            <Switch>
+              <Route exact path="/" component={Home} />
+              <ProtectedRoute
+                isLoggedIn={UID}
+                path="/login"
+                component={Login}
+              />
+              <ProtectedRoute
+                isLoggedIn={UID}
+                path="/signup"
+                component={SignUp}
+              />
+              <Route component={NoMatchRoute} />
+            </Switch>
+            <PasswordVerifyModal
+              title="Verify Password"
+              showModal={showModal}
+              modalErrorState={modalError}
+              modalErrorText={modalErrorText}
+              currentEmailVal={USER ? USER.email : ""}
+              passwordVal={verifiedPassword}
+              passwordOnChange={e => setVerifiedPassword(e.target.value)}
+              onSubmit={onDeleteAccount}
+              onModalClose={closeModal}
+            />
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
-      <Snackbar
-        snackBarVisibility={signOutSnackBar}
-        snackBarClose={() => showSignOutSnackBar(false)}
-        text="Sign out successful"
-      />
-      <Snackbar
-        snackBarVisibility={deletionSnackBar}
-        snackBarClose={() => showDeletionSnackBar(false)}
-        text="Account deleted!"
-      />
-    </UserContext.Provider>
+        <Snackbar
+          snackBarVisibility={signOutSnackBar}
+          snackBarClose={() => showSignOutSnackBar(false)}
+          text="Sign out successful"
+        />
+        <Snackbar
+          snackBarVisibility={deletionSnackBar}
+          snackBarClose={() => showDeletionSnackBar(false)}
+          text="Account deleted!"
+        />
+      </UserContext.Provider>
+    </FirebaseContext.Provider>
   );
 };
 
-export { Router, UserContext };
+export { Router, UserContext, FirebaseContext };

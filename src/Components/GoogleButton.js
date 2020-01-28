@@ -1,9 +1,9 @@
 import React from "react";
-import firebase from "../firebase";
+
 import googleIcon from "../googlesignin.png";
 import "../css/Components/googleButton.css";
 
-const GoogleButton = () => {
+const GoogleButton = ({ firebase }) => {
   const onGoogleSignIn = () => {
     firebase.auth().getRedirectResult();
     const provider = new firebase.auth.GoogleAuthProvider();

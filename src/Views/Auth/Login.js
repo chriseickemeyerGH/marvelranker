@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import firebase from "../../firebase.js";
+import React, { useState, useContext } from "react";
+//import firebase from "../../firebase.js";
+import { FirebaseContext } from ".././Router";
 import "../../css/Components/login.css";
 import GoogleButton from "../../Components/GoogleButton";
 import { Button } from "../../Components/Button";
@@ -8,6 +9,7 @@ import { Helmet } from "react-helmet";
 import { AuthInputs } from "../../Components/AuthInputs";
 
 function Login() {
+  const firebase = useContext(FirebaseContext);
   const [passWord, setPassWord] = useState("");
   const [email, setEmail] = useState("");
   const [errorMessage, showErrorMessage] = useState("");
@@ -49,7 +51,7 @@ function Login() {
           </Button>
         </form>
         <h2>Or</h2>
-        <GoogleButton />
+        <GoogleButton firebase={firebase} />
         <p>After completing Google sign-in, you will be redirected shortly</p>
       </div>
     </>
