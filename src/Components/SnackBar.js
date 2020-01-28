@@ -1,7 +1,7 @@
 import React from "react";
 import "../css/Components/snackBar.css";
 
-const Snackbar = ({ snackBarVisibility, text, snackBarClose }) => (
+export const Snackbar = ({ snackBarVisibility, text, snackBarClose }) => (
   <>
     {snackBarVisibility && (
       <div className="snackBarClass">
@@ -18,5 +18,3 @@ const Snackbar = ({ snackBarVisibility, text, snackBarClose }) => (
     )}
   </>
 );
-
-export default Snackbar;

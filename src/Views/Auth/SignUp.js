@@ -3,7 +3,7 @@ import firebase from "../../firebase.js";
 import "../../css/Components/signUp.css";
 import { AuthInputs } from "../../Components/AuthInputs";
 import GoogleButton from "../../Components/GoogleButton";
-import Button from "../../Components/Button";
+import { Button } from "../../Components/Button";
 import { Helmet } from "react-helmet";
 
 function SignUp() {

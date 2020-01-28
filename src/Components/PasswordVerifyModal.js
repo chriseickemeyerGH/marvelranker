@@ -1,7 +1,7 @@
 import React from "react";
 import Modal from "./Modal";
 import { TextBox } from "./TextBox";
-import Button from "./Button";
+import { Button } from "./Button";
 
 export const PasswordVerifyModal = ({
   modalErrorState,

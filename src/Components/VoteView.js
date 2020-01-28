@@ -1,25 +1,29 @@
-import React, { Suspense, lazy } from "react";
-import Spinner from "./Spinner";
-import { PageForwardButton } from "./PageForwardButton";
+import React from "react";
 
-const VoteData = lazy(() => import("./VoteData"));
+import { PageForwardButton } from "./PageForwardButton";
+import VoteData from "./VoteData";
 
 export const VoteView = ({
   loggedIn,
   onUpvote,
   onDownvote,
   array,
-  onPageForwardClick
+  onPageForwardClick,
+  dataFetched
 }) => {
   return (
-    <Suspense fallback={<Spinner />}>
-      <VoteData
-        loggedIn={loggedIn}
-        onUpvote={onUpvote}
-        onDownvote={onDownvote}
-        array={array}
-      />
-      <PageForwardButton onClick={onPageForwardClick} />
-    </Suspense>
+    <>
+      {dataFetched && (
+        <>
+          <VoteData
+            loggedIn={loggedIn}
+            onUpvote={onUpvote}
+            onDownvote={onDownvote}
+            array={array}
+          />
+          <PageForwardButton onClick={onPageForwardClick} />
+        </>
+      )}
+    </>
   );
 };

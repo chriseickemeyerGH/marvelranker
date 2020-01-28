@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import firebase from "../firebase.js";
-import SnackBar from "../Components/SnackBar";
-import SwitchButtons from "../Components/SwitchButtons";
+import { Snackbar } from "../Components/SnackBar";
+import { SwitchButtons } from "../Components/SwitchButtons";
 import { VoteView } from "../Components/VoteView";
 import { UpvoteFn } from "../Components/UpvoteFn";
 import { DownvoteFn } from "../Components/DownvoteFn";
 import { UserContext } from "./Router";
 import { HomeDescription } from "../Components/HomeDescription";
 import { HomeHead } from "../Components/HomeHead";
+import { Spinner } from "../Components/Spinner";
 import "../css/Views/Home.css";
 
 const Home = () => {
@@ -18,6 +19,7 @@ const Home = () => {
   const [signInSnackBar, showSignInSnackBar] = useState(false);
   const [lastDOC, setLastDOC] = useState("");
   const [filmPageDoc, setFilmPageDoc] = useState("");
+  const [dataFetched, isDataFetched] = useState(false);
   const db = firebase.firestore();
   const [charQuery] = useState(
     db
@@ -31,9 +33,6 @@ const Home = () => {
       .orderBy("votes", "desc")
       .limit(10)
   );
-  // **these useEffect functions are repetitive because
-  // cleanup functions cannot be returned in useCallback hooks
-  // or normal functions used within useEffect with Firebase's unsubscribe functionality
 
   useEffect(() => {
     const unsub = charQuery.onSnapshot(
@@ -53,6 +52,7 @@ const Home = () => {
           });
         });
         setHeroesArr(arr);
+        isDataFetched(true);
       },
       error => {
         console.log(error);
@@ -179,15 +179,20 @@ const Home = () => {
           onClickRight={() => setCharactersShowing(false)}
         />
 
-        <VoteView
-          onUpvote={onUpvote}
-          onDownvote={onDownvote}
-          array={charactersShowing ? heroesArr : filmArr}
-          loggedIn={UID}
-          onPageForwardClick={onPageForward}
-        />
+        {dataFetched ? (
+          <VoteView
+            onUpvote={onUpvote}
+            onDownvote={onDownvote}
+            array={charactersShowing ? heroesArr : filmArr}
+            loggedIn={UID}
+            onPageForwardClick={onPageForward}
+            dataFetched={dataFetched}
+          />
+        ) : (
+          <Spinner />
+        )}
       </div>
-      <SnackBar
+      <Snackbar
         snackBarVisibility={signInSnackBar}
         snackBarClose={() => showSignInSnackBar(false)}
         text="You must login to vote"

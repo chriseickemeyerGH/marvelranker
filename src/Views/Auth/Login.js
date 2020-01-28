@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import firebase from "../../firebase.js";
 import "../../css/Components/login.css";
 import GoogleButton from "../../Components/GoogleButton";
-import Button from "../../Components/Button";
+import { Button } from "../../Components/Button";
 
 import { Helmet } from "react-helmet";
 import { AuthInputs } from "../../Components/AuthInputs";

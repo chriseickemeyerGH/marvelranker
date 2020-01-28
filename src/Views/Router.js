@@ -1,8 +1,8 @@
-import { Route, Switch } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import { PasswordVerifyModal } from "../Components/PasswordVerifyModal";
+import { Route, Switch } from "react-router-dom";
 import Home from "./Home";
 import Login from "./Auth/Login";
+import { PasswordVerifyModal } from "../Components/PasswordVerifyModal";
 import { ProtectedRoute } from "../Components/ProtectedRoute";
 import SignUp from "./Auth/SignUp";
 import NoMatchRoute from "./404";
@@ -10,7 +10,7 @@ import firebase from "../firebase";
 import "../css/router.css";
 import { RouterButtonGroup } from "../Components/RouterButtonGroup";
 import { RouterLinkGroup } from "../Components/RouterLinkGroup";
-import SnackBar from "../Components/SnackBar";
+import { Snackbar } from "../Components/SnackBar";
 
 import Footer from "../Components/Footer";
 
@@ -27,11 +27,7 @@ const Router = () => {
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        setUID(user.uid);
-      } else {
-        setUID("");
-      }
+      user ? setUID(user.uid) : setUID("");
     });
   }, []);
 
@@ -144,12 +140,12 @@ const Router = () => {
         </div>
         <Footer />
       </div>
-      <SnackBar
+      <Snackbar
         snackBarVisibility={signOutSnackBar}
         snackBarClose={() => showSignOutSnackBar(false)}
         text="Sign out successful"
       />
-      <SnackBar
+      <Snackbar
         snackBarVisibility={deletionSnackBar}
         snackBarClose={() => showDeletionSnackBar(false)}
         text="Account deleted!"

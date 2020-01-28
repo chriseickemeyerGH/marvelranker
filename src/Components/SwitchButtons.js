@@ -1,8 +1,8 @@
 import React from "react";
-import Button from "./Button";
+import { Button } from "./Button";
 import "../css/Components/switchButtons.css";
 
-const SwitchButtons = ({ switchState, onClickLeft, onClickRight }) => {
+export const SwitchButtons = ({ switchState, onClickLeft, onClickRight }) => {
   return (
     <div className="centerSwitchButtons">
       <Button
@@ -20,4 +20,3 @@ const SwitchButtons = ({ switchState, onClickLeft, onClickRight }) => {
     </div>
   );
 };
-export default SwitchButtons;
